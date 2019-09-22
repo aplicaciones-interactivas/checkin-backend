@@ -17,14 +17,14 @@ export class TypeormFactory implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       // @ts-ignore
-      type: this.configService.get('DB_DIALECT'),
-      host: this.configService.get('DB_HOST'),
-      port: this.configService.get('DB_PORT'),
-      username: this.configService.get('DB_USERNAME'),
-      password: this.configService.get('DB_PASSWORD'),
-      database: this.configService.get('DB'),
-      entities: [__dirname + '/**/entities/*{.ts,.js}'],
-      synchronize: !!this.configService.get('DB_SYNCHRO'),
+      type: this.configService.getEnvConfig.DB_DIALECT,
+      host: this.configService.getEnvConfig.DB_HOST,
+      port: this.configService.getEnvConfig.DB_PORT,
+      username: this.configService.getEnvConfig.DB_USER,
+      password: this.configService.getEnvConfig.DB_PASSWORD,
+      database: this.configService.getEnvConfig.DB,
+      entities: ['./**/entities/*{.ts,.js}'],
+      synchronize: !!this.configService.getEnvConfig.DB_SYNCHRO,
     };
   }
 }

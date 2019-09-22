@@ -3,6 +3,6 @@ import { AppModule } from './modules/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(app.get('ConfigService').get('EXPRESS_PORT'));
+  await app.listen(app.get('ConfigService').getEnvConfig.API_PORT);
 }
 bootstrap();
