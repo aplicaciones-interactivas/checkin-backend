@@ -28,6 +28,7 @@ export class ConfigService {
       DB_PASSWORD: Joi.string(),
       DB: Joi.string().required(),
       DB_SYNCHRO: Joi.boolean().default(false),
+      JWT_SECRET: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(

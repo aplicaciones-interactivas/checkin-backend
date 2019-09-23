@@ -1,4 +1,4 @@
-import { ConfigService } from '../service/config.service';
+import { ConfigService } from '../service/Config.service';
 import { DynamicModule, Inject, Injectable } from '@nestjs/common';
 import {
   TypeOrmModule,
@@ -7,7 +7,7 @@ import {
 } from '@nestjs/typeorm';
 
 @Injectable()
-export class TypeormFactory implements TypeOrmOptionsFactory {
+export class TypeOrmFactory implements TypeOrmOptionsFactory {
   private configService: ConfigService;
 
   constructor(configService: ConfigService) {
