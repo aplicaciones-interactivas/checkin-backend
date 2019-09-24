@@ -1,7 +1,6 @@
 import { Amenity } from './Amenity';
 import { Room } from './Room';
 import { MealPlan } from './MealPlan';
-import { Organization } from './Organization';
 import {
   Column,
   Entity,
@@ -12,6 +11,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { HotelImage } from './HotelImage';
+import { User } from './User';
 
 @Entity()
 export class Hotel {
@@ -52,7 +52,7 @@ export class Hotel {
   @ManyToMany(() => HotelImage)
   @JoinTable()
   images?: HotelImage[];
-  @ManyToOne(() => Organization)
+  @ManyToOne(() => User)
   @JoinColumn()
-  organization?: Organization;
+  user?: User;
 }

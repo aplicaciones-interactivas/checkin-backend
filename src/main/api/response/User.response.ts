@@ -6,5 +6,5 @@ export default interface UserResponse {
   password: string;
   email: string;
   organizationId?: number;
-  rolesId: RoleResponse[];
+  roles: RoleResponse[];
 }

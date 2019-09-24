@@ -1,5 +1,4 @@
 import { Role } from './Role';
-import { Organization } from './Organization';
 import {
   Column,
   Entity,
@@ -26,12 +25,6 @@ export class User {
 
   @Column('varchar')
   email!: string;
-
-  @ManyToOne(() => Organization, {
-    eager: true,
-  })
-  @JoinColumn()
-  organization!: Organization;
 
   @ManyToMany(type => Role, {
     eager: true,

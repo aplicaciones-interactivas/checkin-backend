@@ -5,9 +5,7 @@ import { ConfigModule } from './Config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmFactory } from '../factory/TypeOrm.factory';
 import { ConfigService } from '../service/Config.service';
-import { UserService } from '../service/User.service';
 import { AuthModule } from './Auth.module';
-import { AuthController } from '../controller/Auth.controller';
 
 @Module({
   imports: [

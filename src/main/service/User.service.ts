@@ -23,6 +23,18 @@ export class UserService {
   }
 
   async signUp(userRequest: SignUpRequest): Promise<UserResponse> {
+    return this.createUserWithRoles(userRequest);
+  }
+
+  async createUser(userRequest: CreateUserRequest): Promise<UserResponse> {
+    const signUpRequest = new SignUpRequest();
+    signUpRequest.username = userRequest.username;
+    signUpRequest.password = userRequest.password;
+    signUpRequest.email = userRequest.email;
+    return this.createUserWithRoles(signUpRequest, userRequest.rolesNames);
+  }
+
+  private async createUserWithRoles(userRequest: SignUpRequest, roleNames?: string[]): Promise<UserResponse> {
     return await getConnection().transaction(async transactionalEntityManager => {
       let userToSave: User = transactionalEntityManager.create(User, userRequest);
       userToSave.password = BCryptUtils.hash(userRequest.password);
@@ -31,7 +43,7 @@ export class UserService {
         .insert()
         .values(userToSave)
         .execute()).raw.insertId;
-      const roles = await this.getRoles();
+      const roles = await this.getRoles(roleNames);
       await transactionalEntityManager
         .createQueryBuilder()
         .relation(User, 'roles')
@@ -56,58 +68,12 @@ export class UserService {
       email: user.email,
       password: user.password,
       username: user.username,
-      rolesId: user.roles.map(rol => {
+      roles: user.roles.map(rol => {
         return { id: rol.id, roleName: rol.roleName };
       }),
     };
-
-    if (user.organization) {
-      userResponse.organizationId = user.organization.id;
-    }
-
     return userResponse;
   }
-
-  /*  async update(
-      id: number,
-      userRequest: UpdateUserRequest,
-    ): Promise<UserResponse | undefined> {
-      const user: User | undefined = await this.userRepository.findOne(id);
-      if (userRequest.password || userRequest.email) {
-        if (user) {
-          if (userRequest.email) {
-            user.email = userRequest.email;
-          }
-          if (userRequest.password) {
-            user.password = BCryptUtils.hash(userRequest.password);
-          }
-          return this.toResponse(await this.userRepository.save(user));
-        } else {
-          throw new NoSuchElementError(this.noSuchElementByIdMessage + id);
-        }
-      }
-      return user ? this.toResponse(user) : undefined;
-    }
-
-    async findById(id: number): Promise<UserResponse> {
-      const user = await this.userRepository.findOne(id);
-      if (user) {
-        return this.toResponse(user);
-      } else {
-        throw new NoSuchElementError(this.noSuchElementByIdMessage + id);
-      }
-    }
-
-    async findByOrganizationId(organizationId: number): Promise<UserResponse[]> {
-      const users = await this.userRepository.find({
-        where: {
-          organization: {
-            id: organizationId,
-          },
-        },
-      });
-      return users.map(this.toResponse);
-    }*/
 
   async findByUsernameOrEmail(param: string): Promise<UserResponse> {
     const user = (await this.connection.getRepository(User).find({
@@ -122,21 +88,21 @@ export class UserService {
     }
   }
 
-   async block(id: number): Promise<void> {
-     return this.activate(id, false);
-   }
+  async block(id: number): Promise<void> {
+    return this.activate(id, false);
+  }
 
-   async activate(id: number, active: boolean): Promise<void> {
-     const user: User | undefined = await this.connection.findOne(User, id);
-     if (user) {
-       user.active = active;
-       await this.connection.update(User, user);
-     } else {
-       throw new NoSuchElementError(this.noSuchElementByIdMessage + id);
-     }
-   }
+  async activate(id: number, active: boolean): Promise<void> {
+    const user: User | undefined = await this.connection.findOne(User, id);
+    if (user) {
+      user.active = active;
+      await this.connection.update(User, user);
+    } else {
+      throw new NoSuchElementError(this.noSuchElementByIdMessage + id);
+    }
+  }
 
-   unblock(id: number): Promise<void> {
-     return this.activate(id, true);
-   }
+  async unblock(id: number): Promise<void> {
+    return this.activate(id, true);
+  }
 }
