@@ -3,5 +3,5 @@ export class CreateUserRequest {
   password!: string;
   email!: string;
   organizationId!: number;
-  rolesId!: number[];
+  rolesNames!: string[];
 }

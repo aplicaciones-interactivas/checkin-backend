@@ -1,4 +1,4 @@
-import { Controller, Body, Post, UseGuards } from '@nestjs/common';
+import { Controller, Body, Post, UseGuards, Patch, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../service/Auth.service';
 import { LoginRequest } from '../api/request/auth/Login.request';
@@ -7,7 +7,7 @@ import { UserService } from '../service/User.service';
 import { CreateUserRequest } from '../api/request/user/CreateUser.request';
 import { getConnection } from 'typeorm';
 
-@Controller('api')
+@Controller('auth')
 export class AuthController {
   private authService: AuthService;
   private userService: UserService;
@@ -24,11 +24,16 @@ export class AuthController {
 
   @Post('signup')
   async signUp(@Body() signUpRequest: SignUpRequest) {
-    const createUserRequest: CreateUserRequest = new CreateUserRequest();
-    createUserRequest.email = signUpRequest.email;
-    createUserRequest.password = signUpRequest.password;
-    createUserRequest.username = signUpRequest.username;
-    createUserRequest.rolesId = [2];
-    return this.userService.create(createUserRequest);
+    return this.userService.signUp(signUpRequest);
+  }
+
+  @Patch('block/:id')
+  async block(@Param('id') id: number) {
+    return this.userService.block(id);
+  }
+
+  @Patch('unblock/:id')
+  async unblock(@Param('id') id: number){
+    return this.userService.unblock(id);
   }
 }

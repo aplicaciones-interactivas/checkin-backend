@@ -7,7 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, RelationId,
 } from 'typeorm';
 
 @Entity()
