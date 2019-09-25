@@ -1,9 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import UserResponse from '../api/response/User.response';
 import { CreateUserRequest } from '../api/request/user/CreateUser.request';
 import { UserService } from '../service/User.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RoleGuard } from '../auth/Role.guard';
+import { RoleGuard } from '../auth/guards/Role.guard';
+import { ItsMeGuard } from '../auth/guards/ItsMe.guard';
+import { UpdateUserRequest } from '../api/request/user/UpdateUser.request';
+import { User } from '../decorator/User.decorator';
 
 @Controller('user')
 export class UserController {
@@ -17,7 +20,18 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER']))
   @Post()
   public create(@Body() createUserRequest: CreateUserRequest): Promise<UserResponse> {
-    return this.userService.createUser(createUserRequest);
+    return this.userService.create(createUserRequest);
   }
 
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER']), new ItsMeGuard())
+  @Put('/:id')
+  public update(@Param('id') id: number, @Body() updateUserRequest: UpdateUserRequest): Promise<UserResponse> {
+    return this.userService.update(id, updateUserRequest);
+  }
+
+  @UseGuards(AuthGuard('jwt'), new ItsMeGuard())
+  @Get('/profile')
+  public profile(@User() user: any) {
+    return this.userService.findById(user.id);
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/User';
-import { getConnection } from 'typeorm';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { Connection, EntityManager, getConnection } from 'typeorm';
+import { InjectConnection, InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import UserResponse from '../api/response/User.response';
 import { CreateUserRequest } from '../api/request/user/CreateUser.request';
 
@@ -10,6 +10,7 @@ import { BCryptUtils } from '../utils/BCrypt.utils';
 import { RoleService } from './Role.service';
 import { Role } from '../entities/Role';
 import { SignUpRequest } from '../api/request/auth/SignUp.request';
+import { UpdateUserRequest } from '../api/request/user/UpdateUser.request';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
     'Unable to find user with param: ';
   private roleService: RoleService;
 
-  constructor(@InjectConnection() private connection, roleService: RoleService) {
+  constructor(@InjectEntityManager() private entityManager: EntityManager, roleService: RoleService) {
     this.roleService = roleService;
   }
 
@@ -26,7 +27,7 @@ export class UserService {
     return this.createUserWithRoles(userRequest);
   }
 
-  async createUser(userRequest: CreateUserRequest): Promise<UserResponse> {
+  async create(userRequest: CreateUserRequest): Promise<UserResponse> {
     const signUpRequest = new SignUpRequest();
     signUpRequest.username = userRequest.username;
     signUpRequest.password = userRequest.password;
@@ -34,8 +35,21 @@ export class UserService {
     return this.createUserWithRoles(signUpRequest, userRequest.rolesNames);
   }
 
+  async update(id: number, userRequest: UpdateUserRequest): Promise<UserResponse> {
+    return await this.entityManager.transaction(async transactionalEntityManager => {
+      const user = await transactionalEntityManager.findOne(User, id);
+      if (user.password) {
+        user.password = BCryptUtils.hash(userRequest.password);
+      }
+      if (user.email) {
+        user.email = BCryptUtils.hash(userRequest.email);
+      }
+      return this.toResponse(user);
+    });
+  }
+
   private async createUserWithRoles(userRequest: SignUpRequest, roleNames?: string[]): Promise<UserResponse> {
-    return await getConnection().transaction(async transactionalEntityManager => {
+    return await this.entityManager.transaction(async transactionalEntityManager => {
       let userToSave: User = transactionalEntityManager.create(User, userRequest);
       userToSave.password = BCryptUtils.hash(userRequest.password);
       userToSave.id = (await transactionalEntityManager
@@ -76,7 +90,7 @@ export class UserService {
   }
 
   async findByUsernameOrEmail(param: string): Promise<UserResponse> {
-    const user = (await this.connection.getRepository(User).find({
+    const user = (await this.entityManager.find(User, {
       where: [{ username: param }, { email: param }],
     }))[0];
     if (user) {
@@ -88,15 +102,19 @@ export class UserService {
     }
   }
 
+  async findById(id: number): Promise<UserResponse> {
+    return this.toResponse(await this.entityManager.findOne(User, id));
+  }
+
   async block(id: number): Promise<void> {
     return this.activate(id, false);
   }
 
   async activate(id: number, active: boolean): Promise<void> {
-    const user: User | undefined = await this.connection.findOne(User, id);
+    const user: User | undefined = await this.entityManager.findOne(User, id);
     if (user) {
       user.active = active;
-      await this.connection.update(User, user);
+      await this.entityManager.save(User, user);
     } else {
       throw new NoSuchElementError(this.noSuchElementByIdMessage + id);
     }
