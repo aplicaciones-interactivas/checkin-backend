@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/User';
-import { Connection, EntityManager, getConnection } from 'typeorm';
-import { InjectConnection, InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import UserResponse from '../api/response/User.response';
 import { CreateUserRequest } from '../api/request/user/CreateUser.request';
 
@@ -15,8 +15,7 @@ import { UpdateUserRequest } from '../api/request/user/UpdateUser.request';
 @Injectable()
 export class UserService {
   private noSuchElementByIdMessage = 'Unable to find user with id: ';
-  private noSuchElementByUsernameOrEmailMessage =
-    'Unable to find user with param: ';
+  private noSuchElementByUsernameOrEmailMessage = 'Unable to find user with param: ';
   private roleService: RoleService;
 
   constructor(@InjectEntityManager() private entityManager: EntityManager, roleService: RoleService) {
@@ -42,7 +41,7 @@ export class UserService {
         user.password = BCryptUtils.hash(userRequest.password);
       }
       if (user.email) {
-        user.email = BCryptUtils.hash(userRequest.email);
+        user.email = userRequest.email;
       }
       return this.toResponse(user);
     });

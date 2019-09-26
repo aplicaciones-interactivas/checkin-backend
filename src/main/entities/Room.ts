@@ -1,5 +1,4 @@
 import { Amenity } from './Amenity';
-import { Bed } from './Bed';
 import {
   Column,
   Entity,
@@ -29,8 +28,4 @@ export class Room {
   @ManyToMany(() => Amenity)
   @JoinTable()
   amenities?: Amenity[];
-
-  @ManyToMany(() => Bed)
-  @JoinTable()
-  beds?: Bed[];
 }
