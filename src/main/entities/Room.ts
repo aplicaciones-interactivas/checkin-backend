@@ -2,30 +2,21 @@ import { Amenity } from './Amenity';
 import {
   Column,
   Entity,
-  JoinColumn,
   JoinTable,
-  ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { RoomType } from './RoomType';
 
 @Entity()
 export class Room {
   @PrimaryGeneratedColumn()
   id!: number;
-
-  @Column('varchar')
-  type!: string;
-
   @Column('integer')
-  maxOcupancy?: number;
-
-  @Column('decimal')
-  surfaceArea?: number;
-
-  @Column('integer')
-  guests?: number;
-
-  @ManyToMany(() => Amenity)
+  number!: number;
+/*  @ManyToOne(() => RoomType)
   @JoinTable()
-  amenities?: Amenity[];
+  type!: RoomType;*/
+  @Column('integer')
+  roomTypeId!: number;
 }

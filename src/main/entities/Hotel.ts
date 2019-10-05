@@ -8,9 +8,8 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   JoinColumn,
-  JoinTable,
+  JoinTable, OneToMany,
 } from 'typeorm';
-import { HotelImage } from './HotelImage';
 import { User } from './User';
 
 @Entity()
@@ -43,15 +42,9 @@ export class Hotel {
   @ManyToMany(() => Amenity)
   @JoinTable()
   amenities?: Amenity[];
-  @ManyToMany(() => Room)
-  @JoinTable()
-  rooms?: Room[];
   @ManyToMany(() => MealPlan)
   @JoinTable()
   mealPlans?: MealPlan[];
-  @ManyToMany(() => HotelImage)
-  @JoinTable()
-  images?: HotelImage[];
   @ManyToOne(() => User)
   @JoinColumn()
   user?: User;

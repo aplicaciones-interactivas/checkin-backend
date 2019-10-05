@@ -1,7 +1,7 @@
 import { Body, Controller, Injectable, Post } from '@nestjs/common';
 import { RoomService } from '../service/Room.service';
 import { Room } from '../entities/Room';
-import { RoomRequest } from '../api/request/room/Room.request';
+import { CreateRoomRequest } from '../api/request/room/CreateRoom.request';
 
 @Injectable()
 @Controller('room')
@@ -10,7 +10,7 @@ export class RoomController {
   }
 
   @Post()
-  public create(@Body()roomRequest: RoomRequest) {
+  public create(@Body()roomRequest: CreateRoomRequest) {
     return this.roomService.create(roomRequest);
   }
 }
