@@ -4,41 +4,33 @@ import { HotelRequest } from '../api/request/hotel/Hotel.request';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
 import { MealPlan } from '../entities/MealPlan';
+import { User } from '../entities/User';
+import { HotelRepository } from '../repository/Hotel.repository';
 
 @Injectable()
 export class HotelService {
-  private entityManager: EntityManager;
+  hotelRepository: HotelRepository;
 
-  constructor(entityManager: EntityManager) {
-    this.entityManager = entityManager;
+  constructor(hotelRepository: HotelRepository) {
+    this.hotelRepository = hotelRepository;
   }
 
   public async create(hotelRequest: HotelRequest) {
-    let hotel = this.entityManager.create(Hotel, hotelRequest);
-    await this.entityManager.transaction(async entityManager => {
-      hotel = await entityManager.save(hotel);
-      const amenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.amenitiesId);
-      const mealPlans: MealPlan[] = await entityManager.findByIds(MealPlan, hotelRequest.mealPlansId);
-      entityManager.createQueryBuilder()
-        .relation(Hotel, 'amenities')
-        .of(hotel)
-        .set(amenities);
-      entityManager.createQueryBuilder()
-        .relation(Hotel, 'mealPlans')
-        .of(hotel)
-        .set(mealPlans);
-    });
+    return await this.hotelRepository.create(hotelRequest);
   }
 
   public async update(entityId: number, hotelRequest) {
-    return await this.entityManager.transaction(async entityManager => {
-      const hotel = entityManager.create(hotelRequest);
-      await entityManager.update(Hotel, { where: { id: entityId } }, hotel);
-      return await entityManager.findOne(Hotel, entityId);
-    });
+    return await this.hotelRepository.update(entityId, hotelRequest);
   }
 
   public async delete(entityId: number) {
-    await this.entityManager.delete(Hotel, { where: { id: entityId } });
+    await this.hotelRepository.delete(entityId);
+  }
+
+  public async findAllByUser(user: User) {
+    if (user.roles.map(r => r.roleName).includes('SUPERUSER')) {
+      return await this.hotelRepository.findAll();
+    }
+    return await this.hotelRepository.findAllByUser(user.id);
   }
 }

@@ -48,4 +48,6 @@ export class Hotel {
   @ManyToOne(() => User)
   @JoinColumn()
   user?: User;
+  @Column('integer')
+  userId!: number;
 }

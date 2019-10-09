@@ -1,5 +1,4 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
-import UserResponse from '../api/response/User.response';
 import { CreateUserRequest } from '../api/request/user/CreateUser.request';
 import { UserService } from '../service/User.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,13 +18,13 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER']))
   @Post()
-  public create(@Body() createUserRequest: CreateUserRequest): Promise<UserResponse> {
+  public create(@Body() createUserRequest: CreateUserRequest) {
     return this.userService.create(createUserRequest);
   }
 
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER']), new ItsMeGuard())
   @Put('/:id')
-  public update(@Param('id') id: number, @Body() updateUserRequest: UpdateUserRequest): Promise<UserResponse> {
+  public update(@Param('id') id: number, @Body() updateUserRequest: UpdateUserRequest) {
     return this.userService.update(id, updateUserRequest);
   }
 

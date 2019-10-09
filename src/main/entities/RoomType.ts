@@ -32,4 +32,8 @@ export class RoomType {
 
   @Column('decimal')
   price?: number;
+
+  //interno... el usuario no deberia de enterarse de este id
+  @Column('integer')
+  userId?: number;
 }

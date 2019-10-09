@@ -4,8 +4,10 @@ import { ConfigModule } from './Config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmFactory } from '../factory/TypeOrm.factory';
 import { ConfigService } from '../service/Config.service';
-import { AuthModule } from './Auth.module';
+import { UserModule } from './User.module';
+import { RoleModule } from './Role.module';
 import { HotelModule } from './Hotel.module';
+import { AuthModule } from './Auth.module';
 
 @Module({
   imports: [
@@ -15,8 +17,10 @@ import { HotelModule } from './Hotel.module';
       useClass: TypeOrmFactory,
       inject: [ConfigService],
     }),
-    AuthModule,
+    UserModule,
+    RoleModule,
     HotelModule,
+    AuthModule,
   ],
   providers: [AppService],
 })
