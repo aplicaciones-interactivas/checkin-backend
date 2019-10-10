@@ -24,8 +24,9 @@ import { RoomTypeModule } from './RoomType.module';
     HotelModule,
     AuthModule,
     RoomModule,
-    RoomTypeModule
+    RoomTypeModule,
   ],
   providers: [AppService],
 })
-export class AppModule {}
+export class MainModule {
+}

@@ -14,9 +14,9 @@ export class Room {
   id!: number;
   @Column('integer')
   number!: number;
-/*  @ManyToOne(() => RoomType)
+  @ManyToOne(() => RoomType)
   @JoinTable()
-  type!: RoomType;*/
+  type!: RoomType;
   @Column('integer')
   roomTypeId!: number;
 }
