@@ -8,6 +8,8 @@ import { UserModule } from './User.module';
 import { RoleModule } from './Role.module';
 import { HotelModule } from './Hotel.module';
 import { AuthModule } from './Auth.module';
+import { RoomModule } from './Room.module';
+import { RoomTypeModule } from './RoomType.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { AuthModule } from './Auth.module';
     RoleModule,
     HotelModule,
     AuthModule,
+    RoomModule,
+    RoomTypeModule
   ],
   providers: [AppService],
 })

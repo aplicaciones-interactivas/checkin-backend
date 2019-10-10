@@ -1,20 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateRoomRequest } from '../api/request/room/CreateRoom.request';
 import { EntityManager } from 'typeorm';
 import { Room } from '../entities/Room';
-import { Amenity } from '../entities/Amenity';
 import { RoomType } from '../entities/RoomType';
 import { UpdateRoomRequest } from '../api/request/room/UpdateRoom.request';
-import { PermissionUtils } from './permission-utils.service';
+import { PermissionUtils } from '../utils/Permission.utils';
 import { User } from '../entities/User';
-import { boolean } from '@hapi/joi';
 import { Hotel } from '../entities/Hotel';
 import { RoomTypeService } from './RoomType.service';
+import { RoomRepository } from '../repository/Room.repository';
+import { InjectEntityManager } from '@nestjs/typeorm';
 
 @Injectable()
 export class RoomService {
 
-  constructor(private entityManager: EntityManager, private roomTypeService: RoomTypeService ) {
+  constructor(@InjectEntityManager() private entityManager: EntityManager, private roomRepository: RoomRepository, private roomTypeService: RoomTypeService) {
   }
 
   private createRooms(roomRequest: CreateRoomRequest): Room[] {
@@ -28,7 +28,23 @@ export class RoomService {
 
   public async create(createRoomRequest: CreateRoomRequest, user: User): Promise<Room[]> {
     await this.validateAndContinue(createRoomRequest, user);
-    return this.entityManager.save(Room, this.createRooms(createRoomRequest));
+    return this.roomRepository.create(this.createRooms(createRoomRequest));
+  }
+
+  public async update(updateRoomRequest: UpdateRoomRequest, user: User): Promise<Room[]> {
+    await this.validateAndContinue(updateRoomRequest, user);
+    return this.roomRepository.update(updateRoomRequest.roomIds, updateRoomRequest.roomTypeId);
+  }
+
+  public async delete(rooms: number[], user: User) {
+    this.validateAndContinue({ roomIds: rooms }, user);
+    return this.roomRepository.delete(rooms);
+  }
+
+  public async findByHotelId(id: number, user: User): Promise<Room[]> {
+    this.validateAndContinue({ hotelId: id }, user);
+    const roomTypeIds = (await this.roomTypeService.getRoomTypesByHotelId(id)).map(roomType => roomType.id);
+    return this.roomRepository.findByRoomTypeId(roomTypeIds);
   }
 
   private async validateAndContinue(req, user): Promise<void> {
@@ -46,34 +62,7 @@ export class RoomService {
       isOwnerHotel = await PermissionUtils.isOwner(this.entityManager, user, Hotel, req.hotelId);
     }
     if (!isOwnerRoomType && !isOwnerRooms && !isOwnerHotel) {
-      throw new BadRequestException('Invalid request' + req.roomTypeId);
+      throw new UnauthorizedException();
     }
-  }
-
-  public async update(updateRoomRequest: UpdateRoomRequest, user: User): Promise<Room[]> {
-    await this.validateAndContinue(updateRoomRequest, user);
-    await this.entityManager.update(Room, {
-      where: {
-        id: updateRoomRequest.roomIds,
-      },
-    }, {
-      roomTypeId: updateRoomRequest.roomTypeId,
-    });
-    return await this.entityManager.findByIds(Room, updateRoomRequest.roomIds);
-  }
-
-  public async delete(rooms: number[], user: User) {
-    this.validateAndContinue({ roomIds: rooms }, user);
-    await this.entityManager.delete(Room, {
-      where: {
-        id: rooms,
-      },
-    });
-  }
-
-  public async findByHotelId(id: number, user: User): Promise<Room[]> {
-    this.validateAndContinue({ hotelId: id }, user);
-    const roomTypeIds = (await this.roomTypeService.getRoomTypesByHotelId(id)).map(roomType => roomType.id);
-    return this.entityManager.find(Room, {where: {roomTypeId: roomTypeIds}});
   }
 }
