@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Injectable, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HotelService } from '../service/Hotel.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
@@ -17,8 +17,8 @@ export class HotelController {
 
   @Get('')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public findAll(@User() user: any) {
-    return this.hotelService.findAllByUser(user);
+  public findAll(@User() user: any, @Query('page') page: number) {
+    return this.hotelService.findAllByUser(user, page);
   }
 
   @Post('')
