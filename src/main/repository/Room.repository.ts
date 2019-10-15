@@ -19,7 +19,7 @@ export class RoomRepository {
     }, {
       roomTypeId: newRoomTypeId,
     });
-    return await this.entityManager.findByIds(Room, roomIds);
+    return this.entityManager.findByIds(Room, roomIds);
   }
 
   public async delete(roomIds: number[]) {

@@ -20,7 +20,7 @@ export class HotelService {
   }
 
   public async update(entityId: number, hotelRequest) {
-    return await this.hotelRepository.update(entityId, hotelRequest);
+    return this.hotelRepository.update(entityId, hotelRequest);
   }
 
   public async delete(entityId: number) {
@@ -29,8 +29,8 @@ export class HotelService {
 
   public async findAllByUser(user: User) {
     if (user.roles.map(r => r.roleName).includes('SUPERUSER')) {
-      return await this.hotelRepository.findAll();
+      return this.hotelRepository.findAll();
     }
-    return await this.hotelRepository.findAllByUser(user.id);
+    return this.hotelRepository.findAllByUser(user.id);
   }
 }

@@ -29,7 +29,7 @@ export class UserRepository {
   }
 
   async update(id: number, userRequest: UpdateUserRequest): Promise<User> {
-    return await this.entityManager.transaction(async transactionalEntityManager => {
+    return this.entityManager.transaction(async transactionalEntityManager => {
       const user = await transactionalEntityManager.findOne(User, id);
       if (userRequest.password) {
         user.password = userRequest.password;
@@ -37,12 +37,12 @@ export class UserRepository {
       if (userRequest.email) {
         user.email = userRequest.email;
       }
-      return await transactionalEntityManager.save(user);
+      return transactionalEntityManager.save(user);
     });
   }
 
   private async createUserWithRoles(userRequest: SignUpRequest, roleNames?: string[]): Promise<User> {
-    return await this.entityManager.transaction(async transactionalEntityManager => {
+    return this.entityManager.transaction(async transactionalEntityManager => {
       let userToSave: User = transactionalEntityManager.create(User, userRequest);
       userToSave.password = userRequest.password;
       userToSave.active = true;
@@ -64,9 +64,9 @@ export class UserRepository {
 
   private async getRoles(roleNames?: string[]): Promise<Role[]> {
     if (roleNames) {
-      return await this.roleRepository.findByNames(roleNames);
+      return this.roleRepository.findByNames(roleNames);
     } else {
-      return await this.roleRepository.findByNames(['USER']);
+      return this.roleRepository.findByNames(['USER']);
     }
   }
 
@@ -84,7 +84,7 @@ export class UserRepository {
   }
 
   async findById(id: number): Promise<User> {
-    return await this.entityManager.findOne(User, id);
+    return this.entityManager.findOne(User, id);
   }
 
   async block(id: number): Promise<void> {

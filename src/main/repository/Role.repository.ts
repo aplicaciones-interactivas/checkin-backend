@@ -10,7 +10,7 @@ export class RoleRepository {
   }
 
   async findByNames(names: string[]): Promise<Role[]> {
-    return await this.entityManager.find(Role, {
+    return this.entityManager.find(Role, {
       where: { roleName: In(names) },
     });
   }

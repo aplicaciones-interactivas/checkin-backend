@@ -28,7 +28,7 @@ export class HotelImageController {
   )
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public async uploadImage(@UploadedFiles() files, hotelId: number, @User() user: any) {
-    return await this.hotelImageService.save(files.map(file => file.path), hotelId, user);
+    return this.hotelImageService.save(files.map(file => file.path), hotelId, user);
   }
 
   @Delete()

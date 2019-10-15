@@ -34,10 +34,10 @@ export class HotelRepository {
   }
 
   public async update(entityId: number, hotelRequest) {
-    return await this.entityManager.transaction(async entityManager => {
+    return this.entityManager.transaction(async entityManager => {
       const hotel = entityManager.create(Hotel, hotelRequest);
       await entityManager.update(Hotel, { where: { id: entityId } }, hotel);
-      return await entityManager.findOne(Hotel, entityId);
+      return entityManager.findOne(Hotel, entityId);
     });
   }
 
@@ -46,14 +46,14 @@ export class HotelRepository {
   }
 
   public async findAllByUser(id: number) {
-    return await this.entityManager.find(Hotel, { where: { userId: id } });
+    return this.entityManager.find(Hotel, { where: { userId: id } });
   }
 
   public async findAll() {
-    return await this.entityManager.find(Hotel);
+    return this.entityManager.find(Hotel);
   }
 
   public async findById(id: number) {
-    return await this.entityManager.findOne(Hotel, id);
+    return this.entityManager.findOne(Hotel, id);
   }
 }
