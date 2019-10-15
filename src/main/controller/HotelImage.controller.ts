@@ -1,5 +1,5 @@
-import { Controller, Delete, Get, Param, Post, Query, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Delete, Get, HttpCode, Param, Post, Query, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
 import { HotelImageService } from '../service/HotelImage.service';
@@ -14,8 +14,8 @@ export class HotelImageController {
   }
 
   @Post('/:hotelId')
-  @UseInterceptors(FileInterceptor('file',
-    {
+  @UseInterceptors(FilesInterceptor('files',
+    undefined, {
       storage: diskStorage({
         destination: './hotel-images',
         filename: (req, file, cb) => {
@@ -27,11 +27,12 @@ export class HotelImageController {
     ),
   )
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public async uploadImage(@UploadedFiles() files, hotelId: number, @User() user: any) {
+  public async uploadImage(@UploadedFiles() files, @Param('hotelId') hotelId: number, @User() user: any) {
     return this.hotelImageService.save(files.map(file => file.path), hotelId, user);
   }
 
   @Delete()
+  @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public async deleteImage(@Query('ids') ids: number[], @User() user: any) {
     await this.hotelImageService.delete(ids, user);
@@ -39,6 +40,6 @@ export class HotelImageController {
 
   @Get('/:fileId')
   async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
-    res.sendFile(fileId, { root: 'avatars'});
+    res.sendFile(fileId, { root: 'hotel-images' });
   }
 }
