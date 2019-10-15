@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 import { Amenity } from './Amenity';
 import { Hotel } from './Hotel';
 
@@ -6,13 +6,11 @@ import { Hotel } from './Hotel';
 export class HotelImage {
   @PrimaryGeneratedColumn()
   id!: number;
-  @Column('varchar')
-  format!: string;
   @Column('text')
   path!: string;
-  @ManyToMany(() => Hotel)
+  @ManyToOne(() => Hotel)
   @JoinTable()
-  hotel?: Hotel;
+  hotel?: Promise<Hotel>;
   @Column('integer')
   hotelId!: number;
 }

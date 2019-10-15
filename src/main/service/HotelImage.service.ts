@@ -20,7 +20,6 @@ export class HotelImageService {
       const hotelImage = new HotelImage();
       hotelImage.hotelId = id;
       hotelImage.path = path;
-      hotelImage.format = extname(path);
       return hotelImage;
     });
     return this.hotelImageRepository.save(hotelImages);
@@ -28,14 +27,23 @@ export class HotelImageService {
 
   public async delete(ids: number[], user: User) {
     const hotelImages = await this.hotelImageRepository.findByIds(ids);
-    hotelImages.forEach((hotelImage: HotelImage) => {
-      if (hotelImage.hotel.userId === user.id) {
+
+    await this.asyncForEach(hotelImages, async (hotelImage) => {
+      const hotel = await hotelImage.hotel;
+      if (hotel.userId !== user.id) {
         throw new UnauthorizedException();
       }
     });
+
     (await this.hotelImageRepository.findByIds(ids)).forEach(hi => {
       fs.unlinkSync(hi.path);
     });
     await this.hotelImageRepository.delete(ids);
+  }
+
+  private async asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
   }
 }

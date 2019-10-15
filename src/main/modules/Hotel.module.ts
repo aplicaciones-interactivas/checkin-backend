@@ -9,12 +9,16 @@ import { HotelController } from '../controller/Hotel.controller';
 import { HotelRepository } from '../repository/Hotel.repository';
 import { RoomTypeService } from '../service/RoomType.service';
 import { RoomTypeRepository } from '../repository/RoomType.repository';
+import { HotelImageRepository } from '../repository/HotelImage.repository';
+import { HotelImageService } from '../service/HotelImage.service';
+import { HotelImageController } from '../controller/HotelImage.controller';
+import { HotelImage } from '../entities/HotelImage';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Room, Hotel])],
+  imports: [TypeOrmModule.forFeature([Room, Hotel, HotelImage])],
   exports: [TypeOrmModule],
-  providers: [RoomService, HotelService, HotelRepository, RoomTypeService, RoomTypeRepository],
-  controllers: [RoomController, HotelController],
+  providers: [RoomService, HotelService, HotelRepository, RoomTypeService, RoomTypeRepository, HotelImageRepository, HotelImageService],
+  controllers: [RoomController, HotelController, HotelImageController],
 })
 export class HotelModule {
 }

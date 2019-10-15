@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { RoomTypeService } from '../service/RoomType.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
@@ -34,6 +34,7 @@ export class RoomTypeController {
   }
 
   @Delete('/:id')
+  @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public delete(@Param('id') id: number, @User() user: any) {
     return this.roomTypeService.delete(id, user);

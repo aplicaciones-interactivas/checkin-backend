@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { RoomService } from '../service/Room.service';
 import { Room } from '../entities/Room';
 import { CreateRoomRequest } from '../api/request/room/CreateRoom.request';
@@ -26,6 +26,7 @@ export class RoomController {
   }
 
   @Delete('/')
+  @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public delete(@Query('ids') id: number[], @User() user: any) {
     return this.roomService.delete(id, user);

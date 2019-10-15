@@ -27,10 +27,11 @@ export class HotelService {
     await this.hotelRepository.delete(entityId);
   }
 
-  public async findAllByUser(user: User) {
+  public async findAllByUser(user: User, page: number) {
+    page = page ? page : 1;
     if (user.roles.map(r => r.roleName).includes('SUPERUSER')) {
-      return this.hotelRepository.findAll();
+      return this.hotelRepository.findAll(page);
     }
-    return this.hotelRepository.findAllByUser(user.id);
+    return this.hotelRepository.findAllByUser(user.id, page);
   }
 }
