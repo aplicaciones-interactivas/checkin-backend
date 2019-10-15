@@ -16,7 +16,7 @@ export class HotelService {
   }
 
   public async create(hotelRequest: HotelRequest) {
-    return await this.hotelRepository.create(hotelRequest);
+    return this.hotelRepository.create(hotelRequest);
   }
 
   public async update(entityId: number, hotelRequest) {

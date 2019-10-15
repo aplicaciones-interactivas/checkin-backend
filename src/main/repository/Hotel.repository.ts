@@ -17,24 +17,25 @@ export class HotelRepository {
 
   public async create(hotelRequest: HotelRequest) {
     let hotel = this.entityManager.create(Hotel, hotelRequest);
-    await this.entityManager.transaction(async entityManager => {
+    return this.entityManager.transaction(async entityManager => {
       hotel = await entityManager.save(hotel);
       const amenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.amenitiesId);
       const mealPlans: MealPlan[] = await entityManager.findByIds(MealPlan, hotelRequest.mealPlansId);
       entityManager.createQueryBuilder()
         .relation(Hotel, 'amenities')
         .of(hotel)
-        .set(amenities);
+        .add(amenities);
       entityManager.createQueryBuilder()
         .relation(Hotel, 'mealPlans')
         .of(hotel)
-        .set(mealPlans);
+        .add(mealPlans);
+      return hotel;
     });
   }
 
   public async update(entityId: number, hotelRequest) {
     return await this.entityManager.transaction(async entityManager => {
-      const hotel = entityManager.create(hotelRequest);
+      const hotel = entityManager.create(Hotel, hotelRequest);
       await entityManager.update(Hotel, { where: { id: entityId } }, hotel);
       return await entityManager.findOne(Hotel, entityId);
     });

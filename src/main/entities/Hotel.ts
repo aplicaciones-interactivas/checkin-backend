@@ -23,7 +23,7 @@ export class Hotel {
   contactEmail?: string;
   @Column('varchar')
   primaryContactPhone?: string;
-  @Column('varchar')
+  @Column({ type: 'varchar', nullable: true })
   secondaryContactPhone?: string;
   @Column('varchar')
   checkinTime?: string;
