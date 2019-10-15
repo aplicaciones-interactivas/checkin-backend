@@ -8,9 +8,8 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   JoinColumn,
-  JoinTable,
+  JoinTable, OneToMany,
 } from 'typeorm';
-import { HotelImage } from './HotelImage';
 import { User } from './User';
 
 @Entity()
@@ -24,7 +23,7 @@ export class Hotel {
   contactEmail?: string;
   @Column('varchar')
   primaryContactPhone?: string;
-  @Column('varchar')
+  @Column({ type: 'varchar', nullable: true })
   secondaryContactPhone?: string;
   @Column('varchar')
   checkinTime?: string;
@@ -43,16 +42,12 @@ export class Hotel {
   @ManyToMany(() => Amenity)
   @JoinTable()
   amenities?: Amenity[];
-  @ManyToMany(() => Room)
-  @JoinTable()
-  rooms?: Room[];
   @ManyToMany(() => MealPlan)
   @JoinTable()
   mealPlans?: MealPlan[];
-  @ManyToMany(() => HotelImage)
-  @JoinTable()
-  images?: HotelImage[];
   @ManyToOne(() => User)
   @JoinColumn()
   user?: User;
+  @Column('integer')
+  userId!: number;
 }

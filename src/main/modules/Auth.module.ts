@@ -8,6 +8,9 @@ import { ConfigService } from '../service/Config.service';
 import { JwtFactory } from '../factory/Jwt.factory';
 import { JwtStrategy } from '../auth/Jwt.strategy';
 import { AuthController } from '../controller/Auth.controller';
+import { UserService } from '../service/User.service';
+import { UserRepository } from '../repository/User.repository';
+import { RoleRepository } from '../repository/Role.repository';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { AuthController } from '../controller/Auth.controller';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthController, JwtStrategy],
+  providers: [AuthService, AuthController, JwtStrategy, UserService, UserRepository, RoleRepository],
   exports: [AuthService, AuthController],
 })
 export class AuthModule {}

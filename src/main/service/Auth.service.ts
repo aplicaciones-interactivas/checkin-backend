@@ -18,7 +18,7 @@ export class AuthService {
     const user = await this.userService.findByUsernameOrEmail(
       loginRequest.username,
     );
-    if (user && BCryptUtils.compare(loginRequest.password, user.password)) {
+    if (user && BCryptUtils.compare(loginRequest.password, user.password) && user.active) {
       const payload = { username: user.username, sub: user.id, roles: user.roles.map(value => value.roleName) };
       return {
         access_token: this.jwtService.sign(payload),
