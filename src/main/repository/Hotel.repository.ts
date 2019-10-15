@@ -48,7 +48,11 @@ export class HotelRepository {
     return await this.entityManager.find(Hotel, { where: { userId: id } });
   }
 
-  public async findAll(){
+  public async findAll() {
     return await this.entityManager.find(Hotel);
+  }
+
+  public async findById(id: number) {
+    return await this.entityManager.findOne(Hotel, id);
   }
 }

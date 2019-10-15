@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppService } from '../service/App.service';
 import { ConfigModule } from './Config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmFactory } from '../factory/TypeOrm.factory';
@@ -10,6 +9,7 @@ import { HotelModule } from './Hotel.module';
 import { AuthModule } from './Auth.module';
 import { RoomModule } from './Room.module';
 import { RoomTypeModule } from './RoomType.module';
+import { InfoEntityModule } from './InfoEntity.module';
 
 @Module({
   imports: [
@@ -25,8 +25,8 @@ import { RoomTypeModule } from './RoomType.module';
     AuthModule,
     RoomModule,
     RoomTypeModule,
+    InfoEntityModule,
   ],
-  providers: [AppService],
 })
 export class MainModule {
 }

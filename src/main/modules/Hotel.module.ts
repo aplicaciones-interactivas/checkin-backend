@@ -13,7 +13,7 @@ import { RoomTypeRepository } from '../repository/RoomType.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([Room, Hotel])],
   exports: [TypeOrmModule],
-  providers: [RoomService, HotelService, RoomController, HotelController, HotelRepository, RoomTypeService, RoomTypeRepository],
+  providers: [RoomService, HotelService, HotelRepository, RoomTypeService, RoomTypeRepository],
   controllers: [RoomController, HotelController],
 })
 export class HotelModule {

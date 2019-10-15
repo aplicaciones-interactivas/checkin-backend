@@ -36,4 +36,8 @@ export class User {
     default: false,
   })
   active!: boolean;
+
+  public hasRole(roleName: string): boolean {
+    return this.roles.map(role => role.roleName).includes(roleName);
+  }
 }
