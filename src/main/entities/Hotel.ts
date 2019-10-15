@@ -1,5 +1,4 @@
 import { Amenity } from './Amenity';
-import { Room } from './Room';
 import { MealPlan } from './MealPlan';
 import {
   Column,
@@ -16,7 +15,6 @@ import { User } from './User';
 export class Hotel {
   @PrimaryGeneratedColumn()
   id!: number;
-
   @Column('varchar')
   name!: string;
   @Column('varchar')
@@ -39,15 +37,19 @@ export class Hotel {
   city!: string;
   @Column('text')
   address!: string;
-  @ManyToMany(() => Amenity)
+  @ManyToMany(() => Amenity, {
+    eager: true,
+  })
   @JoinTable()
   amenities?: Amenity[];
-  @ManyToMany(() => MealPlan)
+  @ManyToMany(() => MealPlan, {
+    eager: true,
+  })
   @JoinTable()
   mealPlans?: MealPlan[];
   @ManyToOne(() => User)
   @JoinColumn()
-  user?: User;
+  user?: Promise<User>;
   @Column('integer')
   userId!: number;
 }
