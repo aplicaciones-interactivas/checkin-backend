@@ -15,7 +15,10 @@ export class HotelService {
     this.hotelRepository = hotelRepository;
   }
 
-  public async create(hotelRequest: HotelRequest) {
+  public async create(hotelRequest: HotelRequest, user: any) {
+    if (!user.hasRole('SUPERUSER')) {
+      hotelRequest.userId = user.userId;
+    }
     return this.hotelRepository.create(hotelRequest);
   }
 
