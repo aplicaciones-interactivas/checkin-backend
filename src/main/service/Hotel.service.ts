@@ -27,6 +27,10 @@ export class HotelService {
     await this.hotelRepository.delete(entityId);
   }
 
+  public async findAll() {
+    return this.hotelRepository.findAll();
+  }
+
   public async findAllByUser(user: User) {
     if (user.roles.map(r => r.roleName).includes('SUPERUSER')) {
       return this.hotelRepository.findAll();

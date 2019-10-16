@@ -15,10 +15,15 @@ export class HotelController {
     this.hotelService = hotelService;
   }
 
-  @Get('')
+  @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public findAll(@User() user: any) {
+  public findAllByUser(@User() user: any) {
     return this.hotelService.findAllByUser(user);
+  }
+
+  @Get('')
+  public findAll() {
+    return this.hotelService.findAll();
   }
 
   @Post('')
