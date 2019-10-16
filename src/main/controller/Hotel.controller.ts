@@ -22,8 +22,8 @@ export class HotelController {
   }
 
   @Get('')
-  public findAll() {
-    return this.hotelService.findAll();
+  public findAll(@Query('page') page: number) {
+    return this.hotelService.findAll(page);
   }
 
   @Post('')

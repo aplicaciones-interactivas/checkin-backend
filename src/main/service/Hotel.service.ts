@@ -30,8 +30,8 @@ export class HotelService {
     await this.hotelRepository.delete(entityId);
   }
 
-  public async findAll() {
-    return this.hotelRepository.findAll();
+  public async findAll(page: number) {
+    return this.hotelRepository.findAll(page);
   }
 
   public async findAllByUser(user: User, page: number) {
