@@ -24,7 +24,7 @@ export class HotelController {
   @Post('')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public create(@Body() hotelRequest: HotelRequest, @User() user: any) {
-    return this.hotelService.create(hotelRequest);
+    return this.hotelService.create(hotelRequest, user);
   }
 
   @Put('/:id')

@@ -7,7 +7,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   JoinColumn,
-  JoinTable, OneToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './User';
 
