@@ -45,11 +45,11 @@ export class HotelRepository {
     await this.entityManager.delete(Hotel, { where: { id: entityId } });
   }
 
-  public async findAllByUser(id: number) {
-    return this.entityManager.find(Hotel, { where: { userId: id } });
+  public async findAllByUser(id: number, page: number) {
+    return this.entityManager.find(Hotel, { where: { userId: id }, skip: ((page - 1) * 10), take: 10 });
   }
 
-  public async findAll() {
+  public async findAll(page: number) {
     return this.entityManager.find(Hotel);
   }
 
