@@ -1,12 +1,9 @@
 import { Controller, Body, Post, UseGuards, Patch, Param, UseFilters, HttpCode } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../service/Auth.service';
 import { LoginDto } from '../api/request/auth/Login.dto';
 import { SignUpDto } from '../api/request/auth/SignUp.dto';
 import { UserService } from '../service/User.service';
-import { CreateUserDto } from '../api/request/user/CreateUser.dto';
-import { getConnection } from 'typeorm';
-import { RoleGuard } from '../auth/guards/Role.guard';
+import { User } from '../entities/User';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +23,7 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(200)
-  async signUp(@Body() signUpRequest: SignUpDto) {
+  async signUp(@Body() signUpRequest: SignUpDto): Promise<User> {
     return this.userService.signUp(signUpRequest);
   }
 

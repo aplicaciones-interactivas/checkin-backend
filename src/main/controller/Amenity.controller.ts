@@ -1,5 +1,6 @@
 import { Controller, Get, Injectable } from '@nestjs/common';
 import { AmenitiyRepository } from '../repository/Amenitiy.repository';
+import { Amenity } from '../entities/Amenity';
 
 @Controller('amenity')
 export class AmenityController {
@@ -7,7 +8,7 @@ export class AmenityController {
   }
 
   @Get()
-  public findAll() {
+  public findAll(): Promise<Amenity[]> {
     return this.amenityRepository.findAll();
   }
 }

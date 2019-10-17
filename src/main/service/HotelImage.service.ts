@@ -27,7 +27,7 @@ export class HotelImageService {
     return this.hotelImageRepository.save(hotelImages);
   }
 
-  public async delete(ids: number[], user: User) {
+  public async delete(ids: number[], user: LoggedUserDto) {
     const hotelImages = await this.hotelImageRepository.findByIds(ids);
 
     await this.asyncForEach(hotelImages, async (hotelImage) => {
