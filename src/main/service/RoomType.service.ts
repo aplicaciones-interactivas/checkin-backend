@@ -8,6 +8,7 @@ import { PermissionUtils } from '../utils/Permission.utils';
 import { Hotel } from '../entities/Hotel';
 import { userInfo } from 'os';
 import { User } from '../entities/User';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 
 @Injectable()
 export class RoomTypeService {
@@ -18,12 +19,12 @@ export class RoomTypeService {
     return this.roomTypeRepository.getRoomTypesByHotelId(id);
   }
 
-  public async create(roomType: RoomType, user: User): Promise<RoomType> {
+  public async create(roomType: RoomType, user: LoggedUserDto): Promise<RoomType> {
     await this.validateAndContinue(roomType, user);
     return this.roomTypeRepository.create(roomType);
   }
 
-  public findAllByUser(user: User): Promise<RoomType[]> {
+  public findAllByUser(user: LoggedUserDto): Promise<RoomType[]> {
     return this.roomTypeRepository.findAllByUserId(user.id);
   }
 
@@ -31,17 +32,17 @@ export class RoomTypeService {
     return this.roomTypeRepository.findAll();
   }
 
-  public async update(entityId: number, newRoomType: RoomType, user: User): Promise<RoomType> {
+  public async update(entityId: number, newRoomType: RoomType, user: LoggedUserDto): Promise<RoomType> {
     await this.validateAndContinue({ id: entityId }, user);
     return this.roomTypeRepository.update(entityId, newRoomType);
   }
 
-  public async delete(entityId: number, user: User): Promise<void> {
+  public async delete(entityId: number, user: LoggedUserDto): Promise<void> {
     await this.validateAndContinue({ id: entityId }, user);
     await this.roomTypeRepository.delete(entityId);
   }
 
-  private async validateAndContinue(req, user): Promise<void> {
+  private async validateAndContinue(req, user: LoggedUserDto): Promise<void> {
     const hotelId = req.hotelId;
     const entityId = req.id;
     let isHotelOwner = true;

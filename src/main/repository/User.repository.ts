@@ -1,10 +1,10 @@
 
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { SignUpRequest } from '../api/request/auth/SignUp.request';
+import { SignUpDto } from '../api/request/auth/SignUp.dto';
 import { User } from '../entities/User';
-import { CreateUserRequest } from '../api/request/user/CreateUser.request';
-import { UpdateUserRequest } from '../api/request/user/UpdateUser.request';
+import { CreateUserDto } from '../api/request/user/CreateUser.dto';
+import { UpdateUserDto } from '../api/request/user/UpdateUser.dto';
 import { Role } from '../entities/Role';
 import { NoSuchElementError } from '../error/NoSuchElement.error';
 import { RoleRepository } from './Role.repository';
@@ -16,19 +16,19 @@ export class UserRepository {
   constructor(@InjectEntityManager() private entityManager: EntityManager, private roleRepository: RoleRepository) {
   }
 
-  async signUp(userRequest: SignUpRequest): Promise<User> {
+  async signUp(userRequest: SignUpDto): Promise<User> {
     return this.createUserWithRoles(userRequest);
   }
 
-  async create(userRequest: CreateUserRequest): Promise<User> {
-    const signUpRequest = new SignUpRequest();
+  async create(userRequest: CreateUserDto): Promise<User> {
+    const signUpRequest = new SignUpDto();
     signUpRequest.username = userRequest.username;
     signUpRequest.password = userRequest.password;
     signUpRequest.email = userRequest.email;
     return this.createUserWithRoles(signUpRequest, userRequest.rolesNames);
   }
 
-  async update(id: number, userRequest: UpdateUserRequest): Promise<User> {
+  async update(id: number, userRequest: UpdateUserDto): Promise<User> {
     return this.entityManager.transaction(async transactionalEntityManager => {
       const user = await transactionalEntityManager.findOne(User, id);
       if (userRequest.password) {
@@ -41,7 +41,7 @@ export class UserRepository {
     });
   }
 
-  private async createUserWithRoles(userRequest: SignUpRequest, roleNames?: string[]): Promise<User> {
+  private async createUserWithRoles(userRequest: SignUpDto, roleNames?: string[]): Promise<User> {
     return this.entityManager.transaction(async transactionalEntityManager => {
       let userToSave: User = transactionalEntityManager.create(User, userRequest);
       userToSave.password = userRequest.password;

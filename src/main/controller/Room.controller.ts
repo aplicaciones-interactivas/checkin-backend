@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { RoomService } from '../service/Room.service';
 import { Room } from '../entities/Room';
-import { CreateRoomRequest } from '../api/request/room/CreateRoom.request';
+import { CreateRoomDto } from '../api/request/room/CreateRoom.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
-import { User } from '../decorator/User.decorator';
-import { UpdateRoomRequest } from '../api/request/room/UpdateRoom.request';
+import { UserDecorator } from '../decorator/User.decorator';
+import { UpdateRoomDto } from '../api/request/room/UpdateRoom.dto';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 
 @Injectable()
 @Controller('room')
@@ -15,26 +16,26 @@ export class RoomController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public create(@Body()roomRequest: CreateRoomRequest, @User() user: any) {
+  public create(@Body()roomRequest: CreateRoomDto, @UserDecorator() user: LoggedUserDto) {
     return this.roomService.create(roomRequest, user);
   }
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public update(@Param('id') id: number, @Body()roomRequest: UpdateRoomRequest, @User() user: any) {
+  public update(@Param('id') id: number, @Body()roomRequest: UpdateRoomDto, @UserDecorator() user: LoggedUserDto) {
     return this.roomService.update(roomRequest, user);
   }
 
   @Delete('/')
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public delete(@Query('ids') id: number[], @User() user: any) {
+  public delete(@Query('ids') id: number[], @UserDecorator() user: LoggedUserDto) {
     return this.roomService.delete(id, user);
   }
 
   @Get('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public getByHotelId(@Param('id') id: number, @User() user: any) {
+  public getByHotelId(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
     return this.roomService.findByHotelId(id, user);
   }
 }

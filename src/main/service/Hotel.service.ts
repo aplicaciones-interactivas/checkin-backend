@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
-import { HotelRequest } from '../api/request/hotel/Hotel.request';
+import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
 import { MealPlan } from '../entities/MealPlan';
 import { User } from '../entities/User';
 import { HotelRepository } from '../repository/Hotel.repository';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { PermissionUtils } from '../utils/Permission.utils';
 
 @Injectable()
 export class HotelService {
@@ -15,18 +17,30 @@ export class HotelService {
     this.hotelRepository = hotelRepository;
   }
 
-  public async create(hotelRequest: HotelRequest, user: any) {
-    if (!user.hasRole('SUPERUSER')) {
-      hotelRequest.userId = user.userId;
+  private validateAndContinue(hotelOwner: number, user: LoggedUserDto) {
+    if (hotelOwner) {
+      if (hotelOwner !== user.id && !PermissionUtils.hasRole(user, 'SUPERUSER')) {
+        throw new UnauthorizedException();
+      }
+    }
+  }
+
+  public async create(hotelRequest: HotelDto, user: LoggedUserDto) {
+    if (!PermissionUtils.hasRole(user, 'SUPERUSER')) {
+      hotelRequest.userId = user.id;
     }
     return this.hotelRepository.create(hotelRequest);
   }
 
-  public async update(entityId: number, hotelRequest) {
+  public async update(entityId: number, hotelRequest, user: LoggedUserDto) {
+    const hotel = await this.hotelRepository.findById(entityId);
+    this.validateAndContinue(hotel.userId, user);
     return this.hotelRepository.update(entityId, hotelRequest);
   }
 
-  public async delete(entityId: number) {
+  public async delete(entityId: number, user: LoggedUserDto) {
+    const hotel = await this.hotelRepository.findById(entityId);
+    this.validateAndContinue(hotel.userId, user);
     await this.hotelRepository.delete(entityId);
   }
 
@@ -34,9 +48,9 @@ export class HotelService {
     return this.hotelRepository.findAll(page);
   }
 
-  public async findAllByUser(user: User, page: number) {
+  public async findAllByUser(user: LoggedUserDto, page: number) {
     page = page ? page : 1;
-    if (user.roles.map(r => r.roleName).includes('SUPERUSER')) {
+    if (PermissionUtils.hasRole(user, 'SUPERUSER')) {
       return this.hotelRepository.findAll(page);
     }
     return this.hotelRepository.findAllByUser(user.id, page);

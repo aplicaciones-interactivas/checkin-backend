@@ -5,6 +5,8 @@ import { HotelImageRepository } from '../repository/HotelImage.repository';
 import { User } from '../entities/User';
 import { HotelRepository } from '../repository/Hotel.repository';
 import * as fs from 'fs';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { PermissionUtils } from '../utils/Permission.utils';
 
 @Injectable()
 export class HotelImageService {
@@ -12,8 +14,8 @@ export class HotelImageService {
   constructor(private hotelImageRepository: HotelImageRepository, private hotelRepository: HotelRepository) {
   }
 
-  public async save(paths: string[], id: number, user: User): Promise<HotelImage[]> {
-    if ((await this.hotelRepository.findById(id)).userId !== user.id && !user.hasRole('SUPERUSER')) {
+  public async save(paths: string[], id: number, user: LoggedUserDto): Promise<HotelImage[]> {
+    if ((await this.hotelRepository.findById(id)).userId !== user.id && PermissionUtils.hasRole(user, 'SUPERUSER')) {
       throw new UnauthorizedException();
     }
     const hotelImages = paths.map(path => {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
-import { HotelRequest } from '../api/request/hotel/Hotel.request';
+import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
 import { MealPlan } from '../entities/MealPlan';
@@ -15,7 +15,7 @@ export class HotelRepository {
     this.entityManager = entityManager;
   }
 
-  public async create(hotelRequest: HotelRequest) {
+  public async create(hotelRequest: HotelDto) {
     let hotel = this.entityManager.create(Hotel, hotelRequest);
     return this.entityManager.transaction(async entityManager => {
       hotel = await entityManager.save(hotel);

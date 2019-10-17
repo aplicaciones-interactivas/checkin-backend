@@ -1,10 +1,10 @@
 import { Controller, Body, Post, UseGuards, Patch, Param, UseFilters, HttpCode } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../service/Auth.service';
-import { LoginRequest } from '../api/request/auth/Login.request';
-import { SignUpRequest } from '../api/request/auth/SignUp.request';
+import { LoginDto } from '../api/request/auth/Login.dto';
+import { SignUpDto } from '../api/request/auth/SignUp.dto';
 import { UserService } from '../service/User.service';
-import { CreateUserRequest } from '../api/request/user/CreateUser.request';
+import { CreateUserDto } from '../api/request/user/CreateUser.dto';
 import { getConnection } from 'typeorm';
 import { RoleGuard } from '../auth/guards/Role.guard';
 
@@ -20,13 +20,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  async login(@Body() loginRequest: LoginRequest) {
+  async login(@Body() loginRequest: LoginDto) {
     return this.authService.login(loginRequest);
   }
 
   @Post('signup')
   @HttpCode(200)
-  async signUp(@Body() signUpRequest: SignUpRequest) {
+  async signUp(@Body() signUpRequest: SignUpDto) {
     return this.userService.signUp(signUpRequest);
   }
 

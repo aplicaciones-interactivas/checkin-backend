@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, 
 import { HotelService } from '../service/Hotel.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
-import { User } from '../decorator/User.decorator';
-import { HotelRequest } from '../api/request/hotel/Hotel.request';
+import { UserDecorator} from '../decorator/User.decorator';
+import { HotelDto } from '../api/request/hotel/Hotel.dto';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 
 @Injectable()
 @Controller('hotel')
@@ -17,7 +18,7 @@ export class HotelController {
 
   @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public findAllByUser(@User() user: any, @Query('page') page: number) {
+  public findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number) {
     return this.hotelService.findAllByUser(user, page);
   }
 
@@ -28,20 +29,20 @@ export class HotelController {
 
   @Post('')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public create(@Body() hotelRequest: HotelRequest, @User() user: any) {
+  public create(@Body() hotelRequest: HotelDto, @UserDecorator() user: LoggedUserDto) {
     return this.hotelService.create(hotelRequest, user);
   }
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public update(@Param('id') id: number, @Body() hotelRequest, @User() user: any) {
-    return this.hotelService.update(id, hotelRequest);
+  public update(@Param('id') id: number, @Body() hotelRequest, @UserDecorator() user: LoggedUserDto) {
+    return this.hotelService.update(id, hotelRequest, user);
   }
 
   @Delete('/:id')
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public delete(@Param('id') id: number, @User() user: any) {
-    return this.hotelService.delete(id);
+  public delete(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
+    return this.hotelService.delete(id, user);
   }
 }

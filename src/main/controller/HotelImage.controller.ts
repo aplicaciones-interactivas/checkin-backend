@@ -3,9 +3,10 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
 import { HotelImageService } from '../service/HotelImage.service';
-import { User } from '../decorator/User.decorator';
+import { UserDecorator } from '../decorator/User.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
+import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 
 @Controller('hotel-image')
 export class HotelImageController {
@@ -27,14 +28,14 @@ export class HotelImageController {
     ),
   )
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public async uploadImage(@UploadedFiles() files, @Param('hotelId') hotelId: number, @User() user: any) {
+  public async uploadImage(@UploadedFiles() files, @Param('hotelId') hotelId: number, @UserDecorator() user: LoggedUserDto) {
     return this.hotelImageService.save(files.map(file => file.path), hotelId, user);
   }
 
   @Delete()
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public async deleteImage(@Query('ids') ids: number[], @User() user: any) {
+  public async deleteImage(@Query('ids') ids: number[], @UserDecorator() user: LoggedUserDto) {
     await this.hotelImageService.delete(ids, user);
   }
 

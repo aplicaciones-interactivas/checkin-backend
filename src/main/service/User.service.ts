@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/User';
-import { CreateUserRequest } from '../api/request/user/CreateUser.request';
+import { CreateUserDto } from '../api/request/user/CreateUser.dto';
 import { BCryptUtils } from '../utils/BCrypt.utils';
-import { SignUpRequest } from '../api/request/auth/SignUp.request';
-import { UpdateUserRequest } from '../api/request/user/UpdateUser.request';
+import { SignUpDto } from '../api/request/auth/SignUp.dto';
+import { UpdateUserDto } from '../api/request/user/UpdateUser.dto';
 import { UserRepository } from '../repository/User.repository';
 import { RoleRepository } from '../repository/Role.repository';
 
@@ -13,17 +13,17 @@ export class UserService {
   constructor(private userRepository: UserRepository, private roleRepository: RoleRepository) {
   }
 
-  async signUp(userRequest: SignUpRequest): Promise<User> {
+  async signUp(userRequest: SignUpDto): Promise<User> {
     userRequest.password = BCryptUtils.hash(userRequest.password);
     return this.userRepository.signUp(userRequest);
   }
 
-  async create(userRequest: CreateUserRequest): Promise<User> {
+  async create(userRequest: CreateUserDto): Promise<User> {
     userRequest.password = BCryptUtils.hash(userRequest.password);
     return this.userRepository.create(userRequest);
   }
 
-  async update(id: number, userRequest: UpdateUserRequest): Promise<User> {
+  async update(id: number, userRequest: UpdateUserDto): Promise<User> {
     if (userRequest.password) {
       userRequest.password = BCryptUtils.hash(userRequest.password);
     }
