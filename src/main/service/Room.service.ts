@@ -48,7 +48,7 @@ export class RoomService {
     return this.roomRepository.findByRoomTypeId(roomTypeIds);
   }
 
-  private async validateAndContinue(req, user: LoggedUserDto): Promise<void> {
+  private async validateAndContinue(req: any, user: LoggedUserDto): Promise<void> {
     let isOwnerRoomType = true;
     let isOwnerRooms = true;
     let isOwnerHotel = true;

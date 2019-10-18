@@ -2,9 +2,10 @@ import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, 
 import { HotelService } from '../service/Hotel.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
-import { UserDecorator} from '../decorator/User.decorator';
+import { UserDecorator } from '../decorator/User.decorator';
 import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { Hotel } from '../entities/Hotel';
 
 @Injectable()
 @Controller('hotel')
@@ -18,31 +19,31 @@ export class HotelController {
 
   @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number) {
+  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number): Promise<Hotel[]> {
     return this.hotelService.findAllByUser(user, page);
   }
 
   @Get('')
-  public findAll(@Query('page') page: number) {
+  findAll(@Query('page') page: number): Promise<Hotel[]> {
     return this.hotelService.findAll(page);
   }
 
   @Post('')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public create(@Body() hotelRequest: HotelDto, @UserDecorator() user: LoggedUserDto) {
+  create(@Body() hotelRequest: HotelDto, @UserDecorator() user: LoggedUserDto): Promise<Hotel> {
     return this.hotelService.create(hotelRequest, user);
   }
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public update(@Param('id') id: number, @Body() hotelRequest, @UserDecorator() user: LoggedUserDto) {
+  update(@Param('id') id: number, @Body() hotelRequest: HotelDto, @UserDecorator() user: LoggedUserDto): Promise<Hotel> {
     return this.hotelService.update(id, hotelRequest, user);
   }
 
   @Delete('/:id')
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public delete(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
-    return this.hotelService.delete(id, user);
+  async delete(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
+    await this.hotelService.delete(id, user);
   }
 }

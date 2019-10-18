@@ -6,6 +6,7 @@ import { UserDecorator } from '../decorator/User.decorator';
 import { RoomType } from '../entities/RoomType';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
+import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
 
 @Controller('room-type')
 export class RoomTypeController {
@@ -15,7 +16,7 @@ export class RoomTypeController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public findAll(@UserDecorator() user: LoggedUserDto) {
+  public findAll(@UserDecorator() user: LoggedUserDto): Promise<RoomType[]> {
     if (PermissionUtils.hasRole(user, 'ADMIN')) {
       return this.roomTypeService.findAllByUser(user);
     } else {
@@ -25,13 +26,13 @@ export class RoomTypeController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public create(@Body() roomType: RoomType, @UserDecorator() user: LoggedUserDto) {
+  async create(@Body() roomType: RoomTypeDto, @UserDecorator() user: LoggedUserDto): Promise<RoomType> {
     return this.roomTypeService.create(roomType, user);
   }
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public update(@Param('id') id: number, @Body() roomType: RoomType, @UserDecorator() user: LoggedUserDto) {
+  public update(@Param('id') id: number, @Body() roomType: RoomTypeDto, @UserDecorator() user: LoggedUserDto) {
     return this.roomTypeService.update(id, roomType, user);
   }
 

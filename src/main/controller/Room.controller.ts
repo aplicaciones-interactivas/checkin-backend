@@ -16,26 +16,26 @@ export class RoomController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public create(@Body()roomRequest: CreateRoomDto, @UserDecorator() user: LoggedUserDto) {
+  async create(@Body()roomRequest: CreateRoomDto, @UserDecorator() user: LoggedUserDto): Promise<Room[]> {
     return this.roomService.create(roomRequest, user);
   }
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public update(@Param('id') id: number, @Body()roomRequest: UpdateRoomDto, @UserDecorator() user: LoggedUserDto) {
+  async update(@Param('id') id: number, @Body()roomRequest: UpdateRoomDto, @UserDecorator() user: LoggedUserDto): Promise<Room[]> {
     return this.roomService.update(roomRequest, user);
   }
 
   @Delete('/')
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public delete(@Query('ids') id: number[], @UserDecorator() user: LoggedUserDto) {
-    return this.roomService.delete(id, user);
+  async delete(@Query('ids') id: number[], @UserDecorator() user: LoggedUserDto) {
+    await this.roomService.delete(id, user);
   }
 
   @Get('/:id')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public getByHotelId(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
+  public getByHotelId(@Param('id') id: number, @UserDecorator() user: LoggedUserDto): Promise<Room[]> {
     return this.roomService.findByHotelId(id, user);
   }
 }

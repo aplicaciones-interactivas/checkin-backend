@@ -3,6 +3,9 @@ import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Room } from '../entities/Room';
+import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
+import { Amenity } from '../entities/Amenity';
+import { User } from '../entities/User';
 
 @Injectable()
 export class RoomTypeRepository {
@@ -14,8 +17,27 @@ export class RoomTypeRepository {
     return this.entityManager.find(RoomType, { where: { hotelId: id } });
   }
 
-  public async create(roomType: RoomType): Promise<RoomType> {
-    return this.entityManager.save(RoomType, roomType);
+  private async save(entityId: number, roomTypeDto: RoomTypeDto): Promise<RoomType> {
+    let roomType: RoomType = this.entityManager.create(RoomType, roomTypeDto);
+    const ameminities: Amenity[] = await this.entityManager.findByIds(Amenity, roomTypeDto.amenitiesIds);
+    return this.entityManager.transaction(async entityManager => {
+      if (entityId) {
+        await this.entityManager.update(RoomType, { where: { id: entityId } }, roomType);
+        roomType = await this.entityManager.findOne(RoomType, roomType.id);
+      } else {
+        roomType = await this.entityManager.save(RoomType, roomType);
+      }
+      await entityManager
+        .createQueryBuilder()
+        .relation(RoomType, 'amenities')
+        .of(roomType)
+        .add(ameminities);
+      return this.entityManager.findOne(RoomType, roomType.id);
+    });
+  }
+
+  public async create(roomTypeDto: RoomTypeDto): Promise<RoomType> {
+    return this.save(undefined, roomTypeDto);
   }
 
   public async findById(id: number): Promise<RoomType> {
@@ -36,9 +58,8 @@ export class RoomTypeRepository {
     });
   }
 
-  public async update(entityId: number, newRoomType: RoomType) {
-    await this.entityManager.update(RoomType, { where: { id: entityId } }, newRoomType);
-    return this.entityManager.findOne(RoomType, { where: { id: entityId } });
+  public async update(entityId: number, newRoomType: RoomTypeDto) {
+    return this.save(entityId, newRoomType);
   }
 
   public async delete(entityId: number) {

@@ -32,7 +32,7 @@ export class HotelService {
     return this.hotelRepository.create(hotelRequest);
   }
 
-  public async update(entityId: number, hotelRequest, user: LoggedUserDto) {
+  public async update(entityId: number, hotelRequest: HotelDto, user: LoggedUserDto) {
     const hotel = await this.hotelRepository.findById(entityId);
     this.validateAndContinue(hotel.userId, user);
     return this.hotelRepository.update(entityId, hotelRequest);

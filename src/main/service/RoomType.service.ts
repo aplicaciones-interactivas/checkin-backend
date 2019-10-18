@@ -9,6 +9,7 @@ import { Hotel } from '../entities/Hotel';
 import { userInfo } from 'os';
 import { User } from '../entities/User';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
 
 @Injectable()
 export class RoomTypeService {
@@ -19,7 +20,7 @@ export class RoomTypeService {
     return this.roomTypeRepository.getRoomTypesByHotelId(id);
   }
 
-  public async create(roomType: RoomType, user: LoggedUserDto): Promise<RoomType> {
+  public async create(roomType: RoomTypeDto, user: LoggedUserDto): Promise<RoomType> {
     await this.validateAndContinue(roomType, user);
     return this.roomTypeRepository.create(roomType);
   }
@@ -32,7 +33,7 @@ export class RoomTypeService {
     return this.roomTypeRepository.findAll();
   }
 
-  public async update(entityId: number, newRoomType: RoomType, user: LoggedUserDto): Promise<RoomType> {
+  public async update(entityId: number, newRoomType: RoomTypeDto, user: LoggedUserDto): Promise<RoomType> {
     await this.validateAndContinue({ id: entityId }, user);
     return this.roomTypeRepository.update(entityId, newRoomType);
   }

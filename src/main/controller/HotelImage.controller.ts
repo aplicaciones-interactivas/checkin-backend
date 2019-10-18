@@ -7,6 +7,7 @@ import { UserDecorator } from '../decorator/User.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { HotelImage } from '../entities/HotelImage';
 
 @Controller('hotel-image')
 export class HotelImageController {
@@ -28,14 +29,14 @@ export class HotelImageController {
     ),
   )
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public async uploadImage(@UploadedFiles() files, @Param('hotelId') hotelId: number, @UserDecorator() user: LoggedUserDto) {
+  async uploadImage(@UploadedFiles() files, @Param('hotelId') hotelId: number, @UserDecorator() user: LoggedUserDto): Promise<HotelImage[]> {
     return this.hotelImageService.save(files.map(file => file.path), hotelId, user);
   }
 
   @Delete()
   @HttpCode(204)
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public async deleteImage(@Query('ids') ids: number[], @UserDecorator() user: LoggedUserDto) {
+  async deleteImage(@Query('ids') ids: number[], @UserDecorator() user: LoggedUserDto) {
     await this.hotelImageService.delete(ids, user);
   }
 

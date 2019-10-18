@@ -8,7 +8,7 @@ export class AmenityController {
   }
 
   @Get()
-  public findAll(): Promise<Amenity[]> {
+  async findAll(): Promise<Amenity[]> {
     return this.amenityRepository.findAll();
   }
 }

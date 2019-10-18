@@ -33,7 +33,7 @@ export class HotelRepository {
     });
   }
 
-  public async update(entityId: number, hotelRequest) {
+  public async update(entityId: number, hotelRequest: HotelDto) {
     return this.entityManager.transaction(async entityManager => {
       const hotel = entityManager.create(Hotel, hotelRequest);
       await entityManager.update(Hotel, { where: { id: entityId } }, hotel);

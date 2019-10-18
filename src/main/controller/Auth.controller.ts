@@ -4,6 +4,7 @@ import { LoginDto } from '../api/request/auth/Login.dto';
 import { SignUpDto } from '../api/request/auth/SignUp.dto';
 import { UserService } from '../service/User.service';
 import { User } from '../entities/User';
+import { AccessTokenDto } from '../api/request/auth/AccessToken.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  async login(@Body() loginRequest: LoginDto) {
+  async login(@Body() loginRequest: LoginDto): Promise<AccessTokenDto> {
     return this.authService.login(loginRequest);
   }
 
@@ -29,11 +30,11 @@ export class AuthController {
 
   @Patch('block/:id')
   async block(@Param('id') id: number) {
-    return this.userService.block(id);
+    await this.userService.block(id);
   }
 
   @Patch('unblock/:id')
   async unblock(@Param('id') id: number) {
-    return this.userService.unblock(id);
+    await this.userService.unblock(id);
   }
 }
