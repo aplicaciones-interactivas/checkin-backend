@@ -6,6 +6,7 @@ import { UserDecorator } from '../decorator/User.decorator';
 import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { Hotel } from '../entities/Hotel';
+import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
 
 @Injectable()
 @Controller('hotel')
@@ -24,8 +25,8 @@ export class HotelController {
   }
 
   @Get('')
-  findAll(@Query('page') page: number): Promise<Hotel[]> {
-    return this.hotelService.findAll(page);
+  findAll(@Query() filter: HotelFilterDto): Promise<Hotel[]> {
+    return this.hotelService.findByFilters(filter);
   }
 
   @Post('')

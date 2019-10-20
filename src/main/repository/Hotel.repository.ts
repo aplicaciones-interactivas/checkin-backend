@@ -6,6 +6,7 @@ import { Amenity } from '../entities/Amenity';
 import { MealPlan } from '../entities/MealPlan';
 import { User } from '../entities/User';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
 
 @Injectable()
 export class HotelRepository {
@@ -49,11 +50,48 @@ export class HotelRepository {
     return this.entityManager.find(Hotel, { where: { userId: id }, skip: ((page - 1) * 10), take: 10 });
   }
 
+  public async findAllByFilter(filter: HotelFilterDto) {
+    return this.entityManager.find(Hotel, this.createWhereFromFilter(filter));
+  }
+
   public async findAll(page: number) {
-    return this.entityManager.find(Hotel);
+    return this.entityManager.find(Hotel, {
+      skip: (((page ? page : 1) - 1) * 10),
+      take: 10,
+    });
   }
 
   public async findById(id: number) {
     return this.entityManager.findOne(Hotel, id);
   }
+
+  private createWhereFromFilter(filter: HotelFilterDto) {
+    const whereFilter: {
+      [key: string]: any;
+    } = {};
+    if (filter.category) {
+      whereFilter.category = filter.category;
+    }
+    if (filter.city) {
+      whereFilter.city = filter.city;
+    }
+    if (filter.country) {
+      whereFilter.country = filter.country;
+    }
+    if (filter.stars) {
+      whereFilter.stars = filter.stars;
+    }
+    if (filter.amenities) {
+      whereFilter.amenities.id = filter.amenities;
+    }
+    if (filter.mealPlans) {
+      whereFilter.mealPlans.id = filter.mealPlans;
+    }
+    return {
+      where: whereFilter,
+      skip: (((filter.page ? filter.page : 1) - 1) * 10),
+      take: 10,
+    };
+  }
+
 }

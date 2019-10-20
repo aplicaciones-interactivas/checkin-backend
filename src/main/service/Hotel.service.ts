@@ -8,6 +8,7 @@ import { User } from '../entities/User';
 import { HotelRepository } from '../repository/Hotel.repository';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
+import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
 
 @Injectable()
 export class HotelService {
@@ -55,4 +56,9 @@ export class HotelService {
     }
     return this.hotelRepository.findAllByUser(user.id, page);
   }
+
+  public async findByFilters(filters: HotelFilterDto): Promise<Hotel[]> {
+    return this.hotelRepository.findAllByFilter(filters);
+  }
+
 }
