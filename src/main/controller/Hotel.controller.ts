@@ -7,6 +7,7 @@ import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { Hotel } from '../entities/Hotel';
 import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { Page } from '../entities/utils/Page';
 
 @Injectable()
 @Controller('hotel')
@@ -20,12 +21,12 @@ export class HotelController {
 
   @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number): Promise<Hotel[]> {
+  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number): Promise<Page<Hotel>> {
     return this.hotelService.findAllByUser(user, page);
   }
 
   @Get('')
-  findAll(@Query() filter: HotelFilterDto): Promise<Hotel[]> {
+  findAll(@Query() filter: HotelFilterDto): Promise<Page<Hotel>> {
     return this.hotelService.findByFilters(filter);
   }
 

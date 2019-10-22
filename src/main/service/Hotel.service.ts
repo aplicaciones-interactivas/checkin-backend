@@ -57,7 +57,7 @@ export class HotelService {
     return this.hotelRepository.findAllByUser(user.id, page);
   }
 
-  public async findByFilters(filters: HotelFilterDto): Promise<Hotel[]> {
+  public async findByFilters(filters: HotelFilterDto) {
     return this.hotelRepository.findAllByFilter(filters);
   }
 
