@@ -16,7 +16,7 @@ import { HotelImage } from '../entities/HotelImage';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Room, Hotel, HotelImage])],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, HotelRepository],
   providers: [RoomService, HotelService, HotelRepository, RoomTypeService, RoomTypeRepository, HotelImageRepository, HotelImageService],
   controllers: [RoomController, HotelController, HotelImageController],
 })

@@ -3,10 +3,13 @@ import {
   Column,
   Entity,
   JoinTable,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RoomType } from './RoomType';
+import { Reservation } from './Reservation';
+import { User } from './User';
+import { Hotel } from './Hotel';
 
 @Entity()
 export class Room {
@@ -14,9 +17,19 @@ export class Room {
   id!: number;
   @Column('integer')
   number!: number;
-  @ManyToOne(() => RoomType)
+  @ManyToOne(() => RoomType, {
+    eager: true,
+  })
   @JoinTable()
   type!: RoomType;
   @Column('integer')
   roomTypeId!: number;
+  @OneToMany(() => Reservation, reservation => reservation.room)
+  reservations: Promise<Reservation[]>;
+
+  @ManyToOne(() => Hotel)
+  @JoinTable()
+  hotel: Promise<Hotel>;
+
+  hotelId: number;
 }

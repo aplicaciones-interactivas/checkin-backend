@@ -29,6 +29,10 @@ export class RoomTypeService {
     return this.roomTypeRepository.findAllByUserId(user.id);
   }
 
+  public findById(id: number) {
+    return this.roomTypeRepository.findById(id);
+  }
+
   public findAll(): Promise<RoomType[]> {
     return this.roomTypeRepository.findAll();
   }

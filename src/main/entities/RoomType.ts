@@ -21,11 +21,11 @@ export class RoomType {
 
   @ManyToMany(() => Amenity)
   @JoinTable()
-  amenities?: Amenity[];
+  amenities?: Promise<Amenity[]>;
 
   @ManyToOne(() => Hotel)
   @JoinColumn()
-  hotel?: Hotel;
+  hotel?: Promise<Hotel>;
 
   @Column('integer')
   hotelId?: number;
