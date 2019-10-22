@@ -19,7 +19,7 @@ export class HotelRepository {
   public async create(hotelRequest: HotelDto) {
     let hotel = this.entityManager.create(Hotel, hotelRequest);
     return this.entityManager.transaction(async entityManager => {
-      hotel = await entityManager.save(hotel);
+      hotel = await entityManager.save(Hotel, hotel);
       const amenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.amenitiesId);
       const mealPlans: MealPlan[] = await entityManager.findByIds(MealPlan, hotelRequest.mealPlansId);
       entityManager.createQueryBuilder()

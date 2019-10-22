@@ -18,18 +18,20 @@ export class RoomService {
   constructor(@InjectEntityManager() private entityManager: EntityManager, private roomRepository: RoomRepository, private roomTypeService: RoomTypeService) {
   }
 
-  private createRooms(roomRequest: CreateRoomDto): Room[] {
+  private async createRooms(roomRequest: CreateRoomDto): Promise<Room[]> {
+    const roomType: RoomType = await this.roomTypeService.findById(roomRequest.roomTypeId);
     return roomRequest.numbers.map((num) => {
       const room: Room = new Room();
       room.number = num;
       room.roomTypeId = roomRequest.roomTypeId;
+      room.hotelId = roomType.hotelId;
       return room;
     });
   }
 
   public async create(createRoomRequest: CreateRoomDto, user: LoggedUserDto): Promise<Room[]> {
     await this.validateAndContinue(createRoomRequest, user);
-    return this.roomRepository.create(this.createRooms(createRoomRequest));
+    return this.roomRepository.create(await this.createRooms(createRoomRequest));
   }
 
   public async update(updateRoomRequest: UpdateRoomDto, user: LoggedUserDto): Promise<Room[]> {
@@ -65,5 +67,9 @@ export class RoomService {
     if (!isOwnerRoomType && !isOwnerRooms && !isOwnerHotel) {
       throw new UnauthorizedException();
     }
+  }
+
+  public findAvailableByRoomType(roomTypeId: number, from: Date, until: Date) {
+    return this.roomRepository.findAvailableByRoomType(roomTypeId, from, until);
   }
 }

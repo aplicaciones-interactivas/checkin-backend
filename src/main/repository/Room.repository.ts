@@ -1,6 +1,7 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, Not, SelectQueryBuilder } from 'typeorm';
 import { Room } from '../entities/Room';
 import { Injectable } from '@nestjs/common';
+import { Reservation } from '../entities/Reservation';
 
 @Injectable()
 export class RoomRepository {
@@ -32,5 +33,22 @@ export class RoomRepository {
 
   public async findByRoomTypeId(roomTypeIds: number[]): Promise<Room[]> {
     return this.entityManager.find(Room, { where: { roomTypeId: roomTypeIds } });
+  }
+
+  public async findAvailableByRoomType(id: number, from: Date, until: Date): Promise<Room[]> {
+
+    const availablesRooms: string = await this.entityManager.createQueryBuilder().select()
+      .select('reservation.roomId')
+      .from(Reservation, 'reservation')
+      .where('reservation.from <=\'' + from + '\' and reservation.until >=\'' + from + '\'')
+      .orWhere('reservation.from <\'' + until + '\' and reservation.until >=\'' + until + '\'')
+      .orWhere('reservation.from >=\'' + from + '\' and reservation.from <=\'' + until + '\'').getQuery();
+    const selectQuery = this.entityManager.createQueryBuilder().select('room').from(Room, 'room')
+      .where('roomTypeId = :roomTypeId', { roomTypeId: id });
+    if (availablesRooms.length !== 0) {
+      selectQuery.andWhere('id not in (' + availablesRooms + ')');
+    }
+    const result = await selectQuery.getMany();
+    return result;
   }
 }

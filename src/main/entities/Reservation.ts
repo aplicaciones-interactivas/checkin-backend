@@ -13,16 +13,22 @@ import {
 export class Reservation {
   @PrimaryGeneratedColumn()
   id!: number;
-  @ManyToOne(() => Room)
+  @ManyToOne(() => Room, {
+    eager: true,
+  })
   room!: Room;
   @Column('datetime')
   from!: Date;
   @Column('datetime')
   until!: Date;
-  @ManyToOne(() => MealPlan)
+  @ManyToOne(() => MealPlan, {
+    eager: true,
+  })
   @JoinColumn()
   mealPlan?: MealPlan;
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, {
+    eager: true,
+  })
   @JoinColumn()
   user!: User;
 }

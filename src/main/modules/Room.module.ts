@@ -8,7 +8,7 @@ import { RoomController } from '../controller/Room.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Room]), RoomTypeModule],
-  exports: [TypeOrmModule, RoomService, RoomRepository, RoomTypeModule],
+  exports: [TypeOrmModule, RoomService, RoomRepository],
   providers: [RoomService, RoomRepository, RoomTypeModule],
   controllers: [RoomController],
 })
