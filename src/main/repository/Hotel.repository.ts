@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, MoreThanOrEqual } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
@@ -8,6 +8,10 @@ import { User } from '../entities/User';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
 import { Page } from '../entities/utils/Page';
+
+declare type jsonObject = {
+  [key: string]: any;
+};
 
 @Injectable()
 export class HotelRepository {
@@ -48,8 +52,8 @@ export class HotelRepository {
     await this.entityManager.delete(Hotel, { where: { id: entityId } });
   }
 
-  public async findAllByUser(id: number, pageNumber: number): Promise<Page<Hotel>> {
-    return this.buildPage({ page: pageNumber, userId: id });
+  public async findAllByUser(id: number, filter: HotelFilterDto): Promise<Page<Hotel>> {
+    return this.buildPage({ ...filter, userId: id });
   }
 
   private async buildPage(filter) {
@@ -64,8 +68,8 @@ export class HotelRepository {
     return this.buildPage(this.createWhereFromFilter(filter));
   }
 
-  public async findAll(requestedPage: number): Promise<Page<Hotel>> {
-    return this.buildPage({ page: requestedPage });
+  public async findAll(filter: HotelFilterDto): Promise<Page<Hotel>> {
+    return this.buildPage(filter);
   }
 
   public async findById(id: number) {
@@ -73,9 +77,7 @@ export class HotelRepository {
   }
 
   private createWhereFromFilter(filter: HotelFilterDto) {
-    const whereFilter: {
-      [key: string]: any;
-    } = {};
+    const whereFilter: jsonObject = {};
     if (filter.category) {
       whereFilter.category = filter.category;
     }
@@ -86,7 +88,9 @@ export class HotelRepository {
       whereFilter.country = filter.country;
     }
     if (filter.stars) {
-      whereFilter.stars = filter.stars;
+      const arrStars = [];
+      arrStars.push(filter.stars);
+      whereFilter.stars = In(arrStars);
     }
     if (filter.amenities) {
       whereFilter.amenities.id = filter.amenities;
@@ -95,7 +99,11 @@ export class HotelRepository {
       whereFilter.mealPlans.id = filter.mealPlans;
     }
     if (filter.occupancy) {
-      whereFilter.rooms.roomType.maxOcupancy = MoreThanOrEqual(filter.occupancy);
+      const rooms: jsonObject = {};
+      const roomType: jsonObject = {};
+      roomType.maxOcupancy = MoreThanOrEqual(filter.occupancy);
+      rooms.roomType = roomType;
+      whereFilter.rooms = rooms;
     }
     const dbFilter: {
       [key: string]: any;

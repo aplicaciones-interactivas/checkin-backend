@@ -21,8 +21,8 @@ export class HotelController {
 
   @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query('page') page: number): Promise<Page<Hotel>> {
-    return this.hotelService.findAllByUser(user, page);
+  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query() filter: HotelFilterDto): Promise<Page<Hotel>> {
+    return this.hotelService.findAllByUser(user, filter);
   }
 
   @Get('')

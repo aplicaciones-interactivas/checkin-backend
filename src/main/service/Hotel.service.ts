@@ -45,16 +45,17 @@ export class HotelService {
     await this.hotelRepository.delete(entityId);
   }
 
-  public async findAll(page: number) {
-    return this.hotelRepository.findAll(page);
+  public async findAll(pageNumber: number) {
+    const filter: HotelFilterDto = new HotelFilterDto();
+    filter.page = pageNumber;
+    return this.hotelRepository.findAll(filter);
   }
 
-  public async findAllByUser(user: LoggedUserDto, page: number) {
-    page = page ? page : 1;
+  public async findAllByUser(user: LoggedUserDto, filter: HotelFilterDto) {
     if (PermissionUtils.hasRole(user, 'SUPERUSER')) {
-      return this.hotelRepository.findAll(page);
+      return this.hotelRepository.findAll(filter);
     }
-    return this.hotelRepository.findAllByUser(user.id, page);
+    return this.hotelRepository.findAllByUser(user.id, filter);
   }
 
   public async findByFilters(filters: HotelFilterDto) {
