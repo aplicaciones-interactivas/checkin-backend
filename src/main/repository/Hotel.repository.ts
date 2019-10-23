@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { HotelDto } from '../api/request/hotel/Hotel.dto';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
@@ -7,10 +7,16 @@ import { MealPlan } from '../entities/MealPlan';
 import { User } from '../entities/User';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { Page } from '../entities/utils/Page';
+
+declare type jsonObject = {
+  [key: string]: any;
+};
 
 @Injectable()
 export class HotelRepository {
   private entityManager: EntityManager;
+  private static readonly DEFAULT_PAGE_SIZE: number = 18;
 
   constructor(@InjectEntityManager() entityManager: EntityManager) {
     this.entityManager = entityManager;
@@ -46,19 +52,24 @@ export class HotelRepository {
     await this.entityManager.delete(Hotel, { where: { id: entityId } });
   }
 
-  public async findAllByUser(id: number, page: number) {
-    return this.entityManager.find(Hotel, { where: { userId: id }, skip: ((page - 1) * 10), take: 10 });
+  public async findAllByUser(id: number, filter: HotelFilterDto): Promise<Page<Hotel>> {
+    return this.buildPage({ ...filter, userId: id });
+  }
+
+  private async buildPage(filter) {
+    const page: Page<Hotel> = new Page();
+    const dbFilter = this.createWhereFromFilter(filter);
+    page.values = await this.entityManager.find(Hotel, this.createWhereFromFilter(filter));
+    page.pages = Math.ceil((await this.entityManager.count(Hotel, { where: dbFilter.where })) / HotelRepository.DEFAULT_PAGE_SIZE);
+    return page;
   }
 
   public async findAllByFilter(filter: HotelFilterDto) {
-    return this.entityManager.find(Hotel, this.createWhereFromFilter(filter));
+    return this.buildPage(this.createWhereFromFilter(filter));
   }
 
-  public async findAll(page: number) {
-    return this.entityManager.find(Hotel, {
-      skip: (((page ? page : 1) - 1) * 10),
-      take: 10,
-    });
+  public async findAll(filter: HotelFilterDto): Promise<Page<Hotel>> {
+    return this.buildPage(filter);
   }
 
   public async findById(id: number) {
@@ -66,9 +77,7 @@ export class HotelRepository {
   }
 
   private createWhereFromFilter(filter: HotelFilterDto) {
-    const whereFilter: {
-      [key: string]: any;
-    } = {};
+    const whereFilter: jsonObject = {};
     if (filter.category) {
       whereFilter.category = filter.category;
     }
@@ -79,7 +88,9 @@ export class HotelRepository {
       whereFilter.country = filter.country;
     }
     if (filter.stars) {
-      whereFilter.stars = filter.stars;
+      const arrStars = [];
+      arrStars.push(filter.stars);
+      whereFilter.stars = In(arrStars);
     }
     if (filter.amenities) {
       whereFilter.amenities.id = filter.amenities;
@@ -87,11 +98,21 @@ export class HotelRepository {
     if (filter.mealPlans) {
       whereFilter.mealPlans.id = filter.mealPlans;
     }
-    return {
-      where: whereFilter,
-      skip: (((filter.page ? filter.page : 1) - 1) * 10),
-      take: 10,
+    if (filter.occupancy) {
+      const rooms: jsonObject = {};
+      const roomType: jsonObject = {};
+      roomType.maxOcupancy = MoreThanOrEqual(filter.occupancy);
+      rooms.roomType = roomType;
+      whereFilter.rooms = rooms;
+    }
+    const dbFilter: {
+      [key: string]: any;
+    } = {
+      skip: (((filter.page ? filter.page : 1) - 1) * HotelRepository.DEFAULT_PAGE_SIZE),
+      take: HotelRepository.DEFAULT_PAGE_SIZE,
     };
+    dbFilter.where = whereFilter;
+    return dbFilter;
   }
 
 }
