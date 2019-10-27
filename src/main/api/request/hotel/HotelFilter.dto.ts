@@ -7,7 +7,7 @@ export class HotelFilterDto {
   mealPlans: number[];
   name: string;
   from: string;
-  to: string;
+  until: string;
   occupancy: number;
   guests: number;
   page: number;

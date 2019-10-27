@@ -37,7 +37,7 @@ export class RoomRepository {
 
   public async findAvailableByRoomType(id: number, from: Date, until: Date): Promise<Room[]> {
 
-    const availablesRooms: string = await this.entityManager.createQueryBuilder().select()
+    const unavailablesRooms: string = await this.entityManager.createQueryBuilder().select()
       .select('reservation.roomId')
       .from(Reservation, 'reservation')
       .where('reservation.from <=\'' + from + '\' and reservation.until >=\'' + from + '\'')
@@ -45,8 +45,8 @@ export class RoomRepository {
       .orWhere('reservation.from >=\'' + from + '\' and reservation.from <=\'' + until + '\'').getQuery();
     const selectQuery = this.entityManager.createQueryBuilder().select('room').from(Room, 'room')
       .where('roomTypeId = :roomTypeId', { roomTypeId: id });
-    if (availablesRooms.length !== 0) {
-      selectQuery.andWhere('id not in (' + availablesRooms + ')');
+    if (unavailablesRooms.length !== 0) {
+      selectQuery.andWhere('id not in (' + unavailablesRooms + ')');
     }
     const result = await selectQuery.getMany();
     return result;
