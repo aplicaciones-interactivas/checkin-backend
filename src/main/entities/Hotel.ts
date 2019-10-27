@@ -7,9 +7,12 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   JoinColumn,
-  JoinTable,
+  JoinTable, OneToMany, RelationId,
 } from 'typeorm';
 import { User } from './User';
+import { Room } from './Room';
+import { Reservation } from './Reservation';
+import { HotelImage } from './HotelImage';
 
 @Entity()
 export class Hotel {
@@ -50,6 +53,15 @@ export class Hotel {
   @ManyToOne(() => User)
   @JoinColumn()
   user?: Promise<User>;
+  @OneToMany(() => Room, room => room.hotel)
+  @JoinColumn()
+  rooms: Promise<Room>;
   @Column('integer')
   userId!: number;
+  @OneToMany(() => HotelImage, hotelImage => hotelImage.hotel)
+  @JoinColumn()
+  hotelImages: Promise<HotelImage>;
+  @RelationId((hotel: Hotel) => hotel.hotelImages)
+  hotelImagesIds: number[];
+
 }

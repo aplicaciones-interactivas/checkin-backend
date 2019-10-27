@@ -1,10 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
 import { HotelDto } from '../api/request/hotel/Hotel.dto';
-import { Hotel } from '../entities/Hotel';
-import { Amenity } from '../entities/Amenity';
-import { MealPlan } from '../entities/MealPlan';
-import { User } from '../entities/User';
 import { HotelRepository } from '../repository/Hotel.repository';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
