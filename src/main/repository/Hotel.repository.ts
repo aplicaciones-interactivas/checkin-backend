@@ -90,9 +90,11 @@ export class HotelRepository {
 
   private async addFilters(qb: SelectQueryBuilder<Hotel>, filter) {
     qb = qb.leftJoin('hotel.mealPlans', 'mealPlans')
-      .leftJoin('hotel.amenities', 'amenities')
+      .leftJoinAndSelect('hotel.amenities', 'amenities')
       .leftJoin('hotel.hotelImages', 'hotelImages')
       .leftJoin('hotel.user', 'user')
+      .leftJoin('hotel.rooms', 'rooms')
+      .leftJoin('rooms.roomType', 'roomType')
       .where('');
     if (filter.category && filter.category.length !== 0) {
       qb = qb.andWhere('hotel.category = :category', { category: filter.category });
@@ -111,7 +113,7 @@ export class HotelRepository {
         .leftJoinAndSelect('hotel.mealPlans', 'allMealPlans');
     }
     if (filter.occupancy) {
-      qb = qb.andWhere('hotel.occupancy = :occupancy', { occupancy: filter.occupancy });
+      qb = qb.andWhere('roomType.maxOcupancy >= :occupancy', { occupancy: filter.occupancy });
     }
     if (filter.guests) {
       qb = qb.andWhere('hotel.guests = :guests', { guests: filter.guests });

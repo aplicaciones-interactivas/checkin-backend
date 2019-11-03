@@ -29,7 +29,7 @@ export class ReservationRepository {
     return this.entityManager.find(Reservation, {
       where: {
         room: {
-          type: {
+          roomType: {
             hotelId: id,
           },
         },
