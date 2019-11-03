@@ -21,7 +21,7 @@ export class Room {
     eager: true,
   })
   @JoinTable()
-  type!: RoomType;
+  roomType!: RoomType;
   @Column('integer')
   roomTypeId!: number;
   @OneToMany(() => Reservation, reservation => reservation.room)

@@ -53,7 +53,7 @@ export class ReservationService {
 
   private async validateAdminToReservation(reservation: Reservation, user: LoggedUserDto) {
     const room: Room = await reservation.room;
-    const hotel: Hotel = await room.type.hotel;
+    const hotel: Hotel = await room.roomType.hotel;
     if (hotel.userId !== user.id) {
       throw new UnauthorizedException();
     }
