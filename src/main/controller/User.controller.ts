@@ -29,9 +29,9 @@ export class UserController {
     return this.userService.update(id, updateUserRequest);
   }
 
-  @UseGuards(AuthGuard('jwt'), new ItsMeGuard())
+  @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
-  public profile(@UserDecorator() user: LoggedUserDto) {
-    return this.userService.findById(user.id);
+  public profile(@UserDecorator() user: LoggedUserDto): LoggedUserDto {
+    return user;
   }
 }
