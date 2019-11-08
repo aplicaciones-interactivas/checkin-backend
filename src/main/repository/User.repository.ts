@@ -1,4 +1,3 @@
-
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { SignUpDto } from '../api/request/auth/SignUp.dto';
@@ -25,6 +24,8 @@ export class UserRepository {
     signUpRequest.username = userRequest.username;
     signUpRequest.password = userRequest.password;
     signUpRequest.email = userRequest.email;
+    signUpRequest.name = userRequest.name;
+    signUpRequest.lastname = userRequest.lastname;
     return this.createUserWithRoles(signUpRequest, userRequest.rolesNames);
   }
 
@@ -37,6 +38,12 @@ export class UserRepository {
       if (userRequest.email) {
         user.email = userRequest.email;
       }
+      if (userRequest.name) {
+        user.name = userRequest.name;
+      }
+      if (userRequest.lastname) {
+        user.lastname = userRequest.lastname;
+      }
       return transactionalEntityManager.save(user);
     });
   }
@@ -46,6 +53,8 @@ export class UserRepository {
       let userToSave: User = transactionalEntityManager.create(User, userRequest);
       userToSave.password = userRequest.password;
       userToSave.active = true;
+      userToSave.name = userRequest.name;
+      userToSave.lastname = userRequest.lastname;
       userToSave.id = (await transactionalEntityManager
         .createQueryBuilder(User, 'user')
         .insert()

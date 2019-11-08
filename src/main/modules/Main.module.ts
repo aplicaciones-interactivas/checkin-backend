@@ -11,6 +11,7 @@ import { RoomModule } from './Room.module';
 import { RoomTypeModule } from './RoomType.module';
 import { InfoEntityModule } from './InfoEntity.module';
 import { ReservationModule } from './Reservation.module';
+import { PlacesModule } from './Places.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReservationModule } from './Reservation.module';
     RoomTypeModule,
     InfoEntityModule,
     ReservationModule,
+    PlacesModule,
   ],
 })
 export class MainModule {

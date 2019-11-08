@@ -8,6 +8,7 @@ import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { Hotel } from '../entities/Hotel';
 import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
 import { Page } from '../entities/utils/Page';
+import * as fetch from 'node-fetch';
 
 @Injectable()
 @Controller('hotel')

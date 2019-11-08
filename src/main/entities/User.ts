@@ -20,6 +20,16 @@ export class User {
   })
   username!: string;
 
+  @Column('varchar', {
+    nullable: false,
+  })
+  name: string;
+
+  @Column('varchar', {
+    nullable: true,
+  })
+  lastname: string;
+
   @Column('varchar')
   password!: string;
 

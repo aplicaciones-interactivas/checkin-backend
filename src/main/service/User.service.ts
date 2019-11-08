@@ -6,6 +6,7 @@ import { SignUpDto } from '../api/request/auth/SignUp.dto';
 import { UpdateUserDto } from '../api/request/user/UpdateUser.dto';
 import { UserRepository } from '../repository/User.repository';
 import { RoleRepository } from '../repository/Role.repository';
+import { UserDto } from '../api/request/user/User.dto';
 
 @Injectable()
 export class UserService {
