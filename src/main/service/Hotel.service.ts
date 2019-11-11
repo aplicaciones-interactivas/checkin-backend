@@ -4,6 +4,7 @@ import { HotelRepository } from '../repository/Hotel.repository';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
 import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { Hotel } from '../entities/Hotel';
 
 @Injectable()
 export class HotelService {
@@ -19,6 +20,10 @@ export class HotelService {
         throw new UnauthorizedException();
       }
     }
+  }
+
+  public async findById(id: number): Promise<Hotel> {
+    return this.hotelRepository.findById(id);
   }
 
   public async create(hotelRequest: HotelDto, user: LoggedUserDto) {

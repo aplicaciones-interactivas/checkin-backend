@@ -26,6 +26,11 @@ export class HotelController {
     return this.hotelService.findAllByUser(user, filter);
   }
 
+  @Get('/:id')
+  findById(@Param('id') id: number): Promise<Hotel> {
+    return this.hotelService.findById(id);
+  }
+
   @Get('')
   findAll(@Query() filter: HotelFilterDto): Promise<Page<Hotel>> {
     return this.hotelService.findByFilters(filter);

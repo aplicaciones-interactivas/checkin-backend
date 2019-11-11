@@ -4,7 +4,7 @@ import * as fetch from 'node-fetch';
 @Controller('places')
 export class PlacesProxyController {
 
-  private readonly API_KEY: string = 'AIzaSyCr93elOowQMq5CQulQLhXLhsJhMR6BIRY';
+  private readonly API_KEY: string = '';
 
   @Get('/details/:id')
   public async getPlaceDetails(@Param('id') id) {
