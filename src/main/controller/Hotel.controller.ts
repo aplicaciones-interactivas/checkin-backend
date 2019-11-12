@@ -3,10 +3,10 @@ import { HotelService } from '../service/Hotel.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
 import { UserDecorator } from '../decorator/User.decorator';
-import { HotelDto } from '../api/request/hotel/Hotel.dto';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { HotelDto } from '../dto/hotel/Hotel.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { Hotel } from '../entities/Hotel';
-import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { HotelFilterDto } from '../dto/hotel/HotelFilter.dto';
 import { Page } from '../entities/utils/Page';
 import * as fetch from 'node-fetch';
 
@@ -26,7 +26,7 @@ export class HotelController {
     return this.hotelService.findAllByUser(user, filter);
   }
 
-  @Get('/:id')
+  @Get('/id/:id')
   findById(@Param('id') id: number): Promise<Hotel> {
     return this.hotelService.findById(id);
   }
@@ -53,5 +53,10 @@ export class HotelController {
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   async delete(@Param('id') id: number, @UserDecorator() user: LoggedUserDto) {
     await this.hotelService.delete(id, user);
+  }
+
+  @Get('/price')
+  public getBestPrice(@Query('hotelId') hotelId: number, @Query('from') from: string, @Query('until') until: string, @Query('occupancy') occupancy: number) {
+    return this.hotelService.price(hotelId, from, until, occupancy);
   }
 }

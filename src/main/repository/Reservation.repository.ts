@@ -1,6 +1,6 @@
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { Reservation } from '../entities/Reservation';
-import { CreateReservationDto } from '../api/request/reservation/CreateReservation.dto';
+import { CreateReservationDto } from '../dto/reservation/CreateReservation.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';

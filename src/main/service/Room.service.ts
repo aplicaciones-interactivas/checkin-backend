@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateRoomDto } from '../api/request/room/CreateRoom.dto';
+import { CreateRoomDto } from '../dto/room/CreateRoom.dto';
 import { EntityManager } from 'typeorm';
 import { Room } from '../entities/Room';
 import { RoomType } from '../entities/RoomType';
-import { UpdateRoomDto } from '../api/request/room/UpdateRoom.dto';
+import { UpdateRoomDto } from '../dto/room/UpdateRoom.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
 import { User } from '../entities/User';
 import { Hotel } from '../entities/Hotel';
 import { RoomTypeService } from './RoomType.service';
 import { RoomRepository } from '../repository/Room.repository';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 
 @Injectable()
 export class RoomService {

@@ -1,17 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { HotelDto } from '../api/request/hotel/Hotel.dto';
+import { HotelDto } from '../dto/hotel/Hotel.dto';
 import { HotelRepository } from '../repository/Hotel.repository';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
-import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { HotelFilterDto } from '../dto/hotel/HotelFilter.dto';
 import { Hotel } from '../entities/Hotel';
+import { RoomTypeService } from './RoomType.service';
+import { PriceDto } from '../dto/price/PriceDto';
 
 @Injectable()
 export class HotelService {
   hotelRepository: HotelRepository;
+  roomTypeService: RoomTypeService;
 
-  constructor(hotelRepository: HotelRepository) {
+  constructor(hotelRepository: HotelRepository, roomTypeService: RoomTypeService) {
     this.hotelRepository = hotelRepository;
+    this.roomTypeService = roomTypeService;
   }
 
   private validateAndContinue(hotelOwner: number, user: LoggedUserDto) {
@@ -60,6 +64,21 @@ export class HotelService {
 
   public async findByFilters(filters: HotelFilterDto) {
     return this.hotelRepository.findAllByFilter(filters);
+  }
+
+  public async price(hotelId: number, from: string, until: string, maxOccupancy: number) {
+    const roomTypes = await this.roomTypeService.getAvailables(hotelId, from, until, maxOccupancy);
+    const price = new PriceDto();
+    price.price = roomTypes.sort((a, b) => {
+      if (a.price < b.price) {
+        return -1;
+      }
+      if (a.price > b.price) {
+        return 1;
+      }
+      return 0;
+    })[0].price;
+    return price;
   }
 
 }

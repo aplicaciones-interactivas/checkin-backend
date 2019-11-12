@@ -1,9 +1,9 @@
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { SignUpDto } from '../api/request/auth/SignUp.dto';
+import { SignUpDto } from '../dto/auth/SignUp.dto';
 import { User } from '../entities/User';
-import { CreateUserDto } from '../api/request/user/CreateUser.dto';
-import { UpdateUserDto } from '../api/request/user/UpdateUser.dto';
+import { CreateUserDto } from '../dto/user/CreateUser.dto';
+import { UpdateUserDto } from '../dto/user/UpdateUser.dto';
 import { Role } from '../entities/Role';
 import { NoSuchElementError } from '../error/NoSuchElement.error';
 import { RoleRepository } from './Role.repository';

@@ -1,10 +1,10 @@
 import { Controller, Body, Post, UseGuards, Patch, Param, UseFilters, HttpCode } from '@nestjs/common';
 import { AuthService } from '../service/Auth.service';
-import { LoginDto } from '../api/request/auth/Login.dto';
-import { SignUpDto } from '../api/request/auth/SignUp.dto';
+import { LoginDto } from '../dto/auth/Login.dto';
+import { SignUpDto } from '../dto/auth/SignUp.dto';
 import { UserService } from '../service/User.service';
 import { User } from '../entities/User';
-import { AccessTokenDto } from '../api/request/auth/AccessToken.dto';
+import { AccessTokenDto } from '../dto/auth/AccessToken.dto';
 
 @Controller('auth')
 export class AuthController {

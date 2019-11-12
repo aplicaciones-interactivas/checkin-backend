@@ -2,7 +2,7 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, ObjectType } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/User';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 
 export class PermissionUtils {
 

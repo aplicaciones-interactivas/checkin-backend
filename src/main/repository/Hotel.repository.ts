@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Brackets, EntityManager, In, MoreThanOrEqual, SelectQueryBuilder } from 'typeorm';
-import { HotelDto } from '../api/request/hotel/Hotel.dto';
+import { HotelDto } from '../dto/hotel/Hotel.dto';
 import { Hotel } from '../entities/Hotel';
 import { Amenity } from '../entities/Amenity';
 import { MealPlan } from '../entities/MealPlan';
 import { User } from '../entities/User';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { HotelFilterDto } from '../api/request/hotel/HotelFilter.dto';
+import { HotelFilterDto } from '../dto/hotel/HotelFilter.dto';
 import { Page } from '../entities/utils/Page';
 import { Reservation } from '../entities/Reservation';
 import { Room } from '../entities/Room';

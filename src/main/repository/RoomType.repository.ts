@@ -3,7 +3,7 @@ import { EntityManager } from 'typeorm';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Room } from '../entities/Room';
-import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
+import { RoomTypeDto } from '../dto/roomType/RoomType.dto';
 import { Amenity } from '../entities/Amenity';
 import { User } from '../entities/User';
 import { Reservation } from '../entities/Reservation';

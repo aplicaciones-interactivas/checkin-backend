@@ -1,6 +1,6 @@
 import { Column, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Amenity } from '../../../entities/Amenity';
-import { Hotel } from '../../../entities/Hotel';
+import { Amenity } from '../../entities/Amenity';
+import { Hotel } from '../../entities/Hotel';
 
 export class RoomTypeDto {
   type: string;

@@ -1,5 +1,5 @@
 import { Column, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Role } from '../../../entities/Role';
+import { Role } from '../../entities/Role';
 
 export class UserDto {
   id!: number;

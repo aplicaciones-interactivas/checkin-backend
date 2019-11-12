@@ -5,8 +5,8 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { PermissionUtils } from '../utils/Permission.utils';
 import { Hotel } from '../entities/Hotel';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
-import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
+import { RoomTypeDto } from '../dto/roomType/RoomType.dto';
 
 @Injectable()
 export class RoomTypeService {

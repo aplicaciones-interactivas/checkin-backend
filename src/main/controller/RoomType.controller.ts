@@ -4,9 +4,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
 import { UserDecorator } from '../decorator/User.decorator';
 import { RoomType } from '../entities/RoomType';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
-import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
+import { RoomTypeDto } from '../dto/roomType/RoomType.dto';
 
 @Controller('room-type')
 export class RoomTypeController {

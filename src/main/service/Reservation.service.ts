@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { Reservation } from '../entities/Reservation';
-import { CreateReservationDto } from '../api/request/reservation/CreateReservation.dto';
+import { CreateReservationDto } from '../dto/reservation/CreateReservation.dto';
 import { ReservationRepository } from '../repository/Reservation.repository';
 import { HotelRepository } from '../repository/Hotel.repository';
 import { Hotel } from '../entities/Hotel';

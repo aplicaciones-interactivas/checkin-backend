@@ -6,7 +6,7 @@ import { HotelImageService } from '../service/HotelImage.service';
 import { UserDecorator } from '../decorator/User.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { HotelImage } from '../entities/HotelImage';
 
 @Controller('hotel-image')

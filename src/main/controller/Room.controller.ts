@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { RoomService } from '../service/Room.service';
 import { Room } from '../entities/Room';
-import { CreateRoomDto } from '../api/request/room/CreateRoom.dto';
+import { CreateRoomDto } from '../dto/room/CreateRoom.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
 import { UserDecorator } from '../decorator/User.decorator';
-import { UpdateRoomDto } from '../api/request/room/UpdateRoom.dto';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { UpdateRoomDto } from '../dto/room/UpdateRoom.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 
 @Injectable()
 @Controller('room')

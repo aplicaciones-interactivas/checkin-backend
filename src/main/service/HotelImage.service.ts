@@ -5,7 +5,7 @@ import { HotelImageRepository } from '../repository/HotelImage.repository';
 import { User } from '../entities/User';
 import { HotelRepository } from '../repository/Hotel.repository';
 import * as fs from 'fs';
-import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
+import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { PermissionUtils } from '../utils/Permission.utils';
 
 @Injectable()
