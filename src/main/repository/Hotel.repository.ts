@@ -69,9 +69,10 @@ export class HotelRepository {
     qb = await this.addFilters(qb, filter);
     const pageNumber = filter.page ? filter.page : 1;
     const pagePosition = (pageNumber - 1) * HotelRepository.DEFAULT_PAGE_SIZE;
+    const totalSize = (await qb.getMany()).length;
     qb = qb.skip(pagePosition).take(HotelRepository.DEFAULT_PAGE_SIZE);
     page.values = await qb.getMany();
-    page.pages = Math.ceil(page.values.length / HotelRepository.DEFAULT_PAGE_SIZE);
+    page.pages = Math.ceil(totalSize / HotelRepository.DEFAULT_PAGE_SIZE);
     page.page = pageNumber;
     return page;
   }
@@ -94,7 +95,7 @@ export class HotelRepository {
       .leftJoin('hotel.hotelImages', 'hotelImages')
       .leftJoin('hotel.user', 'user')
       .leftJoin('hotel.rooms', 'rooms')
-      .leftJoin('rooms.roomType', 'roomType')
+      .leftJoinAndSelect('rooms.roomType', 'roomType')
       .where('');
     if (filter.category && filter.category.length !== 0) {
       qb = qb.andWhere('hotel.category = :category', { category: filter.category });
@@ -142,8 +143,7 @@ export class HotelRepository {
         .from(Room, 'room')
         .where('room.id not in (' + unavailablesRoomsQuery + ')').getQuery();
 
-      qb.where('hotel.id in (' + availableHotelIdsQuery + ')');
-
+      qb.andWhere('hotel.id in (' + availableHotelIdsQuery + ')');
     }
     /*
 

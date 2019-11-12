@@ -1,4 +1,3 @@
-import { RoomRepository } from '../repository/Room.repository';
 import { RoomTypeRepository } from '../repository/RoomType.repository';
 import { RoomType } from '../entities/RoomType';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -6,8 +5,6 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { PermissionUtils } from '../utils/Permission.utils';
 import { Hotel } from '../entities/Hotel';
-import { userInfo } from 'os';
-import { User } from '../entities/User';
 import { LoggedUserDto } from '../api/request/user/LoggedUser.dto';
 import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
 
@@ -23,6 +20,10 @@ export class RoomTypeService {
   public async create(roomType: RoomTypeDto, user: LoggedUserDto): Promise<RoomType> {
     await this.validateAndContinue(roomType, user);
     return this.roomTypeRepository.create(roomType);
+  }
+
+  public async getAvailables(hotelId: number, from: string, until: string, occupancy: number) {
+    return await this.roomTypeRepository.getAvailables(hotelId, from, until, occupancy);
   }
 
   public findAllByUser(user: LoggedUserDto): Promise<RoomType[]> {

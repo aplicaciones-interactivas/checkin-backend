@@ -6,6 +6,7 @@ import { Room } from '../entities/Room';
 import { RoomTypeDto } from '../api/request/roomType/RoomType.dto';
 import { Amenity } from '../entities/Amenity';
 import { User } from '../entities/User';
+import { Reservation } from '../entities/Reservation';
 
 @Injectable()
 export class RoomTypeRepository {
@@ -15,6 +16,30 @@ export class RoomTypeRepository {
 
   public async getRoomTypesByHotelId(id: number): Promise<RoomType[]> {
     return this.entityManager.find(RoomType, { where: { hotelId: id } });
+  }
+
+  public async getAvailables(hotelId: number, from: string, until: string, occupancy: number) {
+    const unavailablesRoomsQueue = this.entityManager.createQueryBuilder()
+      .from(Room, 'room')
+      .innerJoin('room.reservations', 'reservation')
+      .select('room.id').distinct(true)
+      .where('(reservation.from <=\'' + from + '\' and reservation.until >=\'' + from + '\')')
+      .orWhere('(reservation.from <=\'' + until + '\' and reservation.until >=\'' + until + '\')')
+      .orWhere('(reservation.from >=\'' + from + '\' and reservation.from <=\'' + until + '\')')
+      .getQuery();
+
+    const availableRoomTypesQueue = this.entityManager.createQueryBuilder()
+      .from(Room, 'room')
+      .where('room.id not in (' + unavailablesRoomsQueue + ')')
+      .select('room.roomTypeId').distinct(true).getQuery();
+
+    return this.entityManager.createQueryBuilder()
+      .from(RoomType, 'roomType')
+      .select('roomType')
+      .where('roomType.id in (' + availableRoomTypesQueue + ')')
+      .andWhere('roomType.hotelId = :id', { id: hotelId })
+      .andWhere('roomType.maxOcupancy >= :oc', { oc: occupancy })
+      .getMany();
   }
 
   private async save(entityId: number, roomTypeDto: RoomTypeDto): Promise<RoomType> {

@@ -13,6 +13,7 @@ import { User } from './User';
 import { Room } from './Room';
 import { Reservation } from './Reservation';
 import { HotelImage } from './HotelImage';
+import { RoomType } from './RoomType';
 
 @Entity()
 export class Hotel {
@@ -63,5 +64,4 @@ export class Hotel {
   hotelImages: Promise<HotelImage>;
   @RelationId((hotel: Hotel) => hotel.hotelImages)
   hotelImagesIds: number[];
-
 }
