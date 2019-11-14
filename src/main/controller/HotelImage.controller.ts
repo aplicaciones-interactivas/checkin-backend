@@ -9,7 +9,7 @@ import { RoleGuard } from '../auth/guards/Role.guard';
 import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
 import { HotelImage } from '../entities/HotelImage';
 
-@Controller('hotel-image')
+@Controller('hotel-images')
 export class HotelImageController {
 
   constructor(private hotelImageService: HotelImageService) {

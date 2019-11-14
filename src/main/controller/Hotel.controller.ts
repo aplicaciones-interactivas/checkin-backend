@@ -22,7 +22,7 @@ export class HotelController {
 
   @Get('user')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query() filter: HotelFilterDto): Promise<Page<Hotel>> {
+  findAllByUser(@UserDecorator() user: LoggedUserDto, @Query() filter: HotelFilterDto): Promise<Hotel[]> {
     return this.hotelService.findAllByUser(user, filter);
   }
 
@@ -32,7 +32,7 @@ export class HotelController {
   }
 
   @Get('')
-  findAll(@Query() filter: HotelFilterDto): Promise<Page<Hotel>> {
+  findAll(@Query() filter: HotelFilterDto): Promise<Hotel[]> {
     return this.hotelService.findByFilters(filter);
   }
 

@@ -56,12 +56,11 @@ export class HotelRepository {
     await this.entityManager.delete(Hotel, { where: { id: entityId } });
   }
 
-  public async findAllByUser(id: number, filter: HotelFilterDto): Promise<Page<Hotel>> {
+  public async findAllByUser(id: number, filter: HotelFilterDto): Promise<Hotel[]> {
     return this.buildPage({ ...filter, userId: id });
   }
 
-  private async buildPage(filter) {
-    const page: Page<Hotel> = new Page();
+  private async buildPage(filter): Promise<Hotel[]> {
     //   const dbFilter = this.createWhereFromFilter(filter);
     let qb: SelectQueryBuilder<Hotel> = this.entityManager.createQueryBuilder()
       .select('hotel').distinct(true)
@@ -71,17 +70,14 @@ export class HotelRepository {
     const pagePosition = (pageNumber - 1) * HotelRepository.DEFAULT_PAGE_SIZE;
     const totalSize = (await qb.getMany()).length;
     qb = qb.skip(pagePosition).take(HotelRepository.DEFAULT_PAGE_SIZE);
-    page.values = await qb.getMany();
-    page.pages = Math.ceil(totalSize / HotelRepository.DEFAULT_PAGE_SIZE);
-    page.page = pageNumber;
-    return page;
+    return qb.getMany();
   }
 
   public async findAllByFilter(filter: HotelFilterDto) {
     return this.buildPage(filter);
   }
 
-  public async findAll(filter: HotelFilterDto): Promise<Page<Hotel>> {
+  public async findAll(filter: HotelFilterDto): Promise<Hotel[]> {
     return this.buildPage(filter);
   }
 
@@ -92,7 +88,7 @@ export class HotelRepository {
   private async addFilters(qb: SelectQueryBuilder<Hotel>, filter) {
     qb = qb.leftJoin('hotel.mealPlans', 'mealPlans')
       .leftJoinAndSelect('hotel.amenities', 'amenities')
-      .leftJoin('hotel.hotelImages', 'hotelImages')
+      .leftJoinAndSelect('hotel.hotelImages', 'hotelImages')
       .leftJoin('hotel.user', 'user')
       .leftJoin('hotel.rooms', 'rooms')
       .leftJoinAndSelect('rooms.roomType', 'roomType')
