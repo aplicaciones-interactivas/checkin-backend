@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HotelService } from '../service/Hotel.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
@@ -9,6 +9,8 @@ import { Hotel } from '../entities/Hotel';
 import { HotelFilterDto } from '../dto/hotel/HotelFilter.dto';
 import { Page } from '../entities/utils/Page';
 import * as fetch from 'node-fetch';
+import { CreateMealPlanPriceDto } from '../dto/mealPlan/CreateMealPlanPrice.dto';
+import { UpdateMealPlanPriceDto } from '../dto/mealPlan/UpdateMealPlanPrice.dto';
 
 @Injectable()
 @Controller('hotel')
@@ -58,5 +60,26 @@ export class HotelController {
   @Get('/price')
   public getBestPrice(@Query('hotelId') hotelId: number, @Query('from') from: string, @Query('until') until: string, @Query('occupancy') occupancy: number) {
     return this.hotelService.price(hotelId, from, until, occupancy);
+  }
+
+  @Patch('/:id/mealPlan')
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
+  public addMealPlans(@Param('id') id: number, @Body() mealPlanPrice: CreateMealPlanPriceDto[], @UserDecorator() user: LoggedUserDto) {
+    return this.hotelService.addMealPlans(id, mealPlanPrice, user);
+  }
+
+  @Patch('/:id/mealPlan/:mealPlanId')
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
+  public updateMealPlan(@Param('id') id: number,
+                        @Param('mealPlanId') mealPlanId: number,
+                        @Body() mealPlanPrice: UpdateMealPlanPriceDto, @UserDecorator() user: LoggedUserDto) {
+    return this.hotelService.updateMealPlan(id, mealPlanId, mealPlanPrice.price, user);
+  }
+
+  @Patch('/:id/mealPlan/:mealPlanId/desasociate')
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
+  public desasociateMealPlan(@Param('id') id: number, @Param('mealPlanId') mealPlanId: number, @UserDecorator() user: LoggedUserDto) {
+    return this.hotelService.desasociateMealPlan(id, mealPlanId, user);
+
   }
 }

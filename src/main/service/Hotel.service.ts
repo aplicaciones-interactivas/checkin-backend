@@ -7,6 +7,7 @@ import { HotelFilterDto } from '../dto/hotel/HotelFilter.dto';
 import { Hotel } from '../entities/Hotel';
 import { RoomTypeService } from './RoomType.service';
 import { PriceDto } from '../dto/price/PriceDto';
+import { CreateMealPlanPriceDto } from '../dto/mealPlan/CreateMealPlanPrice.dto';
 
 @Injectable()
 export class HotelService {
@@ -81,4 +82,21 @@ export class HotelService {
     return price;
   }
 
+  public async addMealPlans(id: number, mealPlanPriceDtos: CreateMealPlanPriceDto[], user: LoggedUserDto) {
+    const hotel = await this.hotelRepository.findById(id);
+    this.validateAndContinue(hotel.userId, user);
+    return this.hotelRepository.addMealPlans(mealPlanPriceDtos, id);
+  }
+
+  public async updateMealPlan(id: number, mealPlanId: number, price: number, user: LoggedUserDto) {
+    const hotel = await this.hotelRepository.findById(id);
+    this.validateAndContinue(hotel.userId, user);
+    return this.hotelRepository.updateMealPlan(id, mealPlanId, price);
+  }
+
+  public async desasociateMealPlan(id: number, mealPlanId: number, user: LoggedUserDto) {
+    const hotel = await this.hotelRepository.findById(id);
+    this.validateAndContinue(hotel.userId, user);
+    return this.hotelRepository.desasociate(id, mealPlanId);
+  }
 }

@@ -4,7 +4,6 @@ export class HotelFilterDto {
   country: string;
   city: string;
   amenities: number[];
-  mealPlans: number[];
   name: string;
   from: string;
   until: string;

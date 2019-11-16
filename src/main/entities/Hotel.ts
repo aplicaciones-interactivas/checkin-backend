@@ -46,11 +46,6 @@ export class Hotel {
   })
   @JoinTable()
   amenities?: Amenity[];
-  @ManyToMany(() => MealPlan, {
-    eager: true,
-  })
-  @JoinTable()
-  mealPlans?: MealPlan[];
   @ManyToOne(() => User)
   @JoinColumn()
   user?: Promise<User>;

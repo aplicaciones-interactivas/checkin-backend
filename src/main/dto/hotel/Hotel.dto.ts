@@ -11,10 +11,9 @@ export class HotelDto {
   city: string;
   address: string;
   amenitiesId: number[];
-  mealPlansId: number[];
   userId: number;
 
-  constructor(name: string, contactEmail: string, primaryContactPhone: string, secondaryContactPhone: string, checkinTime: string, checkoutTime: string, stars: number, category: string, country: string, city: string, address: string, amenitiesId: number[], mealPlansId: number[], userId: number) {
+  constructor(name: string, contactEmail: string, primaryContactPhone: string, secondaryContactPhone: string, checkinTime: string, checkoutTime: string, stars: number, category: string, country: string, city: string, address: string, amenitiesId: number[], userId: number) {
     this.name = name;
     this.contactEmail = contactEmail;
     this.primaryContactPhone = primaryContactPhone;
@@ -27,7 +26,6 @@ export class HotelDto {
     this.city = city;
     this.address = address;
     this.amenitiesId = amenitiesId;
-    this.mealPlansId = mealPlansId;
     this.userId = userId;
   }
 }

@@ -11,6 +11,9 @@ import { Page } from '../entities/utils/Page';
 import { Reservation } from '../entities/Reservation';
 import { Room } from '../entities/Room';
 import { from } from 'rxjs';
+import { HotelMealPlan } from '../entities/HotelMealPlan';
+import { CreateMealPlanPriceDto } from '../dto/mealPlan/CreateMealPlanPrice.dto';
+import { number } from '@hapi/joi';
 
 // @ts-ignore
 declare type jsonObject = {
@@ -31,15 +34,10 @@ export class HotelRepository {
     return this.entityManager.transaction(async entityManager => {
       hotel = await entityManager.save(Hotel, hotel);
       const amenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.amenitiesId);
-      const mealPlans: MealPlan[] = await entityManager.findByIds(MealPlan, hotelRequest.mealPlansId);
       entityManager.createQueryBuilder()
         .relation(Hotel, 'amenities')
         .of(hotel)
         .add(amenities);
-      entityManager.createQueryBuilder()
-        .relation(Hotel, 'mealPlans')
-        .of(hotel)
-        .add(mealPlans);
       return hotel;
     });
   }
@@ -61,7 +59,6 @@ export class HotelRepository {
   }
 
   private async buildPage(filter): Promise<Hotel[]> {
-    //   const dbFilter = this.createWhereFromFilter(filter);
     let qb: SelectQueryBuilder<Hotel> = this.entityManager.createQueryBuilder()
       .select('hotel').distinct(true)
       .from(Hotel, 'hotel');
@@ -86,8 +83,7 @@ export class HotelRepository {
   }
 
   private async addFilters(qb: SelectQueryBuilder<Hotel>, filter) {
-    qb = qb.leftJoin('hotel.mealPlans', 'mealPlans')
-      .leftJoinAndSelect('hotel.amenities', 'amenities')
+    qb = qb.leftJoinAndSelect('hotel.amenities', 'amenities')
       .leftJoinAndSelect('hotel.hotelImages', 'hotelImages')
       .leftJoin('hotel.user', 'user')
       .leftJoin('hotel.rooms', 'rooms')
@@ -104,10 +100,6 @@ export class HotelRepository {
     }
     if (filter.country) {
       qb = qb.andWhere('hotel.country = :country', { country: filter.country });
-    }
-    if (filter.mealPlans && filter.mealPlans.length !== 0) {
-      qb = qb.andWhere('mealPlans.id in (:...mealPlans)', { mealPlans: filter.mealPlans })
-        .leftJoinAndSelect('hotel.mealPlans', 'allMealPlans');
     }
     if (filter.occupancy) {
       qb = qb.andWhere('roomType.maxOcupancy >= :occupancy', { occupancy: filter.occupancy });
@@ -141,53 +133,35 @@ export class HotelRepository {
 
       qb.andWhere('hotel.id in (' + availableHotelIdsQuery + ')');
     }
-    /*
-
-  from: string;
-  to: string;
-  page: number;
-*/
     return qb;
 
   }
 
-  private createWhereFromFilter(filter: HotelFilterDto) {
-    const whereFilter: jsonObject = {};
-    if (filter.category) {
-      whereFilter.category = filter.category;
-    }
-    if (filter.city) {
-      whereFilter.city = filter.city;
-    }
-    if (filter.country) {
-      whereFilter.country = filter.country;
-    }
-    if (filter.stars) {
-      const arrStars = [];
-      arrStars.push(filter.stars);
-      whereFilter.stars = In(arrStars);
-    }
-    if (filter.amenities) {
-      whereFilter.amenities.id = filter.amenities;
-    }
-    if (filter.mealPlans) {
-      whereFilter.mealPlans.id = filter.mealPlans;
-    }
-    if (filter.occupancy) {
-      const rooms: jsonObject = {};
-      const roomType: jsonObject = {};
-      roomType.maxOcupancy = MoreThanOrEqual(filter.occupancy);
-      rooms.roomType = roomType;
-      whereFilter.rooms = rooms;
-    }
-    const dbFilter: {
-      [key: string]: any;
-    } = {
-      skip: (((filter.page ? filter.page : 1) - 1) * HotelRepository.DEFAULT_PAGE_SIZE),
-      take: HotelRepository.DEFAULT_PAGE_SIZE,
-    };
-    dbFilter.where = whereFilter;
-    return dbFilter;
+  public async addMealPlans(mealPlanPriceDto: CreateMealPlanPriceDto[], hotelId: number) {
+    return this.entityManager.save(HotelMealPlan, this.mapMealPlanPriceDtoToHotelMealPlan(mealPlanPriceDto, hotelId));
   }
 
+  private mapMealPlanPriceDtoToHotelMealPlan(mealPlanPriceDtos: CreateMealPlanPriceDto[], hotelId: number): HotelMealPlan[] {
+    return mealPlanPriceDtos.map((mealPlanPriceDto: CreateMealPlanPriceDto) => {
+      const hoterMealPlan: HotelMealPlan = this.entityManager.create(HotelMealPlan, mealPlanPriceDto);
+      hoterMealPlan.hotelId = hotelId;
+      return hoterMealPlan;
+    });
+  }
+
+  public async updateMealPlan(id: number, mPId: number, price: number) {
+    const hotelMealPlan: HotelMealPlan = await this.entityManager.findOne(HotelMealPlan, {
+      hotelId: id,
+      mealPlanId: mPId,
+    });
+    hotelMealPlan.additionalPrice = price;
+    return this.entityManager.save(HotelMealPlan, hotelMealPlan);
+  }
+
+  public async desasociate(id: number, mPId: number) {
+    await this.entityManager.delete(HotelMealPlan, {
+      hotelId: id,
+      mealPlanId: mPId,
+    });
+  }
 }
