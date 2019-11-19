@@ -6,11 +6,14 @@ import { ReservationRepository } from '../repository/Reservation.repository';
 import { HotelRepository } from '../repository/Hotel.repository';
 import { Hotel } from '../entities/Hotel';
 import { Room } from '../entities/Room';
+import { RoomTypeService } from './RoomType.service';
+import { PriceDto } from '../dto/price/PriceDto';
+import moment = require('moment');
 
 @Injectable()
 export class ReservationService {
 
-  constructor(private reservationRepository: ReservationRepository, private hotelRepository: HotelRepository) {
+  constructor(private reservationRepository: ReservationRepository, private hotelRepository: HotelRepository, private roomTypeService: RoomTypeService) {
   }
 
   public getMyReservations(user: LoggedUserDto): Promise<Reservation[]> {
@@ -57,5 +60,13 @@ export class ReservationService {
     if (hotel.userId !== user.id) {
       throw new UnauthorizedException();
     }
+  }
+
+  public async getTotalPrice(roomTypeId: number, from: string, until: string) {
+    const price: number = (await this.roomTypeService.findById(roomTypeId)).price;
+    const priceDto: PriceDto = new PriceDto();
+    const days = moment(until).diff(moment(from), 'days');
+    priceDto.price = price * days;
+    return priceDto;
   }
 }

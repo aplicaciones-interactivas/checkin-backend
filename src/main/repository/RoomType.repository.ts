@@ -90,4 +90,11 @@ export class RoomTypeRepository {
   public async delete(entityId: number) {
     return this.entityManager.delete(RoomType, { where: { id: entityId } });
   }
+
+  public async getByIdAndHotelId(eId: number, hId: number) {
+    return this.entityManager.findOne(RoomType, {
+      id: eId, hotelId: hId,
+    });
+
+  }
 }

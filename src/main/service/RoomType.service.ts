@@ -62,4 +62,8 @@ export class RoomTypeService {
       throw new UnauthorizedException();
     }
   }
+
+  public async getByIdAndHotelId(id: number, hId: number) {
+    return this.roomTypeRepository.getByIdAndHotelId(id, hId);
+  }
 }

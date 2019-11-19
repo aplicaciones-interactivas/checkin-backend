@@ -8,6 +8,7 @@ import { Hotel } from '../entities/Hotel';
 import { RoomTypeService } from './RoomType.service';
 import { PriceDto } from '../dto/price/PriceDto';
 import { CreateMealPlanPriceDto } from '../dto/mealPlan/CreateMealPlanPrice.dto';
+import { HotelMealPlan } from '../entities/HotelMealPlan';
 
 @Injectable()
 export class HotelService {
@@ -98,5 +99,9 @@ export class HotelService {
     const hotel = await this.hotelRepository.findById(id);
     this.validateAndContinue(hotel.userId, user);
     return this.hotelRepository.desasociate(id, mealPlanId);
+  }
+
+  public async getHotelMealPlan(id: number): Promise<HotelMealPlan[]> {
+    return this.hotelRepository.getHotelMealPlan(id);
   }
 }

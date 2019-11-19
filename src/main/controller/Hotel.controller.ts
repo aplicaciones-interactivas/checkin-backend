@@ -62,6 +62,11 @@ export class HotelController {
     return this.hotelService.price(hotelId, from, until, occupancy);
   }
 
+  @Get(':id/mealPlan')
+  public getHotelMealPlan(@Param('id') id: number) {
+    return this.hotelService.getHotelMealPlan(id);
+  }
+
   @Patch('/:id/mealPlan')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public addMealPlans(@Param('id') id: number, @Body() mealPlanPrice: CreateMealPlanPriceDto[], @UserDecorator() user: LoggedUserDto) {

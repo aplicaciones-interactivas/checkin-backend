@@ -1,5 +1,5 @@
 import { LoggedUserDto } from '../dto/user/LoggedUser.dto';
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../auth/guards/Role.guard';
 import { Reservation } from '../entities/Reservation';
@@ -13,19 +13,19 @@ export class ReservationController {
   constructor(private reservationService: ReservationService) {
   }
 
-  @Get('/')
+  @Get('/me')
   @UseGuards(AuthGuard('jwt'))
   public getMyReservations(@UserDecorator()user: LoggedUserDto): Promise<Reservation[]> {
     return this.reservationService.getMyReservations(user);
   }
 
-  @Get(':hotelId')
+  @Get('/byHotelId/:hotelId')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public getReservationsByHotelId(@Param()hotelId: number, @UserDecorator() user: LoggedUserDto): Promise<Reservation[]> {
     return this.reservationService.getReservationsByHotelId(hotelId, user);
   }
 
-  @Post('/')
+  @Post('')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['USER']))
   public reserve(@Body() reservation: CreateReservationDto, @UserDecorator() user: LoggedUserDto) {
     return this.reservationService.reserve(reservation, user);
@@ -35,5 +35,10 @@ export class ReservationController {
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['USER']))
   public unreserve(@Param() id: number, @UserDecorator() user: LoggedUserDto) {
     return this.reservationService.unreserve(id, user);
+  }
+
+  @Get('/calculateTotal')
+  public calculateTotal(@Query('roomTypeId') roomTypeId: number, @Query('from') from: string, @Query('until') until: string) {
+    return this.reservationService.getTotalPrice(roomTypeId, from, until);
   }
 }

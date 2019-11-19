@@ -78,8 +78,13 @@ export class HotelRepository {
     return this.buildPage(filter);
   }
 
-  public async findById(id: number) {
-    return this.entityManager.findOne(Hotel, id);
+  public async findById(eId: number) {
+    return this.entityManager.createQueryBuilder()
+      .select('hotel')
+      .from(Hotel, 'hotel')
+      .leftJoinAndSelect('hotel.hotelImages', 'hi')
+      .leftJoinAndSelect('hotel.amenities', 'a')
+      .where('hotel.id= :id', { id: eId }).getOne();
   }
 
   private async addFilters(qb: SelectQueryBuilder<Hotel>, filter) {
@@ -162,6 +167,12 @@ export class HotelRepository {
     await this.entityManager.delete(HotelMealPlan, {
       hotelId: id,
       mealPlanId: mPId,
+    });
+  }
+
+  public async getHotelMealPlan(id: number): Promise<HotelMealPlan[]> {
+    return this.entityManager.find(HotelMealPlan, {
+      hotelId: id,
     });
   }
 }

@@ -46,7 +46,7 @@ export class ReservationRepository {
       let reservation: Reservation = this.entityManager.create(Reservation, createReservation);
       reservation = await this.entityManager.save(Reservation, reservation);
       await entityManager.createQueryBuilder()
-        .relation(Reservation, 'mealPlan')
+        .relation(Reservation, 'hotelMealPlan')
         .of(reservation)
         .set(createReservation.mealPlanId);
       await entityManager.createQueryBuilder()

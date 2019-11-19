@@ -48,4 +48,9 @@ export class RoomTypeController {
     return this.roomTypeService.delete(id, user);
   }
 
+  @Get('/hotel/:hotelId/:id')
+  public getByIdAndHotelId(@Param('hotelId') hotelId: number, @Param('id') id: number) {
+    return this.roomTypeService.getByIdAndHotelId(id, hotelId);
+  }
+
 }

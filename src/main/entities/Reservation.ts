@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { HotelMealPlan } from './HotelMealPlan';
 
 @Entity()
 export class Reservation {
@@ -21,14 +22,19 @@ export class Reservation {
   from!: Date;
   @Column('datetime')
   until!: Date;
-  @ManyToOne(() => MealPlan, {
+  @ManyToOne(() => HotelMealPlan, {
     eager: true,
   })
   @JoinColumn()
-  mealPlan?: MealPlan;
+  hotelMealPlan?: HotelMealPlan;
   @ManyToOne(() => User, {
     eager: true,
   })
   @JoinColumn()
   user!: User;
+
+  @Column('number', {
+    nullable: true,
+  })
+  hotelMealPlanId: number;
 }
