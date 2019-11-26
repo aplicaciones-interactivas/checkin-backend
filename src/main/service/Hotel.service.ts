@@ -83,7 +83,7 @@ export class HotelService {
     return price;
   }
 
-  public async addMealPlans(id: number, mealPlanPriceDtos: CreateMealPlanPriceDto[], user: LoggedUserDto) {
+  public async addMealPlans(id: number, mealPlanPriceDtos: CreateMealPlanPriceDto, user: LoggedUserDto) {
     const hotel = await this.hotelRepository.findById(id);
     this.validateAndContinue(hotel.userId, user);
     return this.hotelRepository.addMealPlans(mealPlanPriceDtos, id);

@@ -142,16 +142,14 @@ export class HotelRepository {
 
   }
 
-  public async addMealPlans(mealPlanPriceDto: CreateMealPlanPriceDto[], hotelId: number) {
+  public async addMealPlans(mealPlanPriceDto: CreateMealPlanPriceDto, hotelId: number) {
     return this.entityManager.save(HotelMealPlan, this.mapMealPlanPriceDtoToHotelMealPlan(mealPlanPriceDto, hotelId));
   }
 
-  private mapMealPlanPriceDtoToHotelMealPlan(mealPlanPriceDtos: CreateMealPlanPriceDto[], hotelId: number): HotelMealPlan[] {
-    return mealPlanPriceDtos.map((mealPlanPriceDto: CreateMealPlanPriceDto) => {
-      const hoterMealPlan: HotelMealPlan = this.entityManager.create(HotelMealPlan, mealPlanPriceDto);
-      hoterMealPlan.hotelId = hotelId;
-      return hoterMealPlan;
-    });
+  private mapMealPlanPriceDtoToHotelMealPlan(mealPlanPriceDto: CreateMealPlanPriceDto, hotelId: number): HotelMealPlan {
+    const hoterMealPlan: HotelMealPlan = this.entityManager.create(HotelMealPlan, mealPlanPriceDto);
+    hoterMealPlan.hotelId = hotelId;
+    return hoterMealPlan;
   }
 
   public async updateMealPlan(id: number, mPId: number, price: number) {
@@ -170,9 +168,15 @@ export class HotelRepository {
     });
   }
 
-  public async getHotelMealPlan(id: number): Promise<HotelMealPlan[]> {
+  public async getHotelMealPlan(searchHotelId: number): Promise<HotelMealPlan[]> {
     return this.entityManager.find(HotelMealPlan, {
-      hotelId: id,
+      hotelId: searchHotelId,
+    });
+  }
+
+  public async getHotelMealPlanById(hotelMealPlanId: number): Promise<HotelMealPlan> {
+    return this.entityManager.findOne(HotelMealPlan, {
+      id: hotelMealPlanId,
     });
   }
 }

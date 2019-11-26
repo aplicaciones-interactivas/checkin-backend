@@ -9,6 +9,7 @@ import { Room } from '../entities/Room';
 import { RoomTypeService } from './RoomType.service';
 import { PriceDto } from '../dto/price/PriceDto';
 import moment = require('moment');
+import { HotelMealPlan } from '../entities/HotelMealPlan';
 
 @Injectable()
 export class ReservationService {
@@ -28,9 +29,10 @@ export class ReservationService {
     throw new UnauthorizedException();
   }
 
-  public reserve(reservation: CreateReservationDto, user: LoggedUserDto): Promise<Reservation> {
+  public async reserve(reservation: CreateReservationDto, user: LoggedUserDto): Promise<Reservation> {
     if (user.roles.includes('USER') && !user.roles.includes('ADMIN')) {
       reservation.userId = user.id;
+      reservation.totalPrice = (await this.getTotalPriceOfReservation(reservation));
       return this.reservationRepository.save(reservation);
     }
   }
@@ -56,7 +58,7 @@ export class ReservationService {
 
   private async validateAdminToReservation(reservation: Reservation, user: LoggedUserDto) {
     const room: Room = await reservation.room;
-    const hotel: Hotel = await room.roomType.hotel;
+    const hotel: Hotel = room.roomType.hotel;
     if (hotel.userId !== user.id) {
       throw new UnauthorizedException();
     }
@@ -68,5 +70,18 @@ export class ReservationService {
     const days = moment(until).diff(moment(from), 'days');
     priceDto.price = price * days;
     return priceDto;
+  }
+
+  public async getTotalPriceOfReservation(reservation: CreateReservationDto) {
+    const from: string = moment(reservation.from).format();
+    const until: string = moment(reservation.until).format();
+
+    const priceOfRoom: number = (await this.getTotalPrice(reservation.roomTypeId, from, until)).price;
+    if (reservation.mealPlanId) {
+      const mealPlan: HotelMealPlan = (await this.hotelRepository.getHotelMealPlanById(reservation.mealPlanId));
+      const days = moment(until).diff(moment(from), 'days');
+      return priceOfRoom + (days * mealPlan.additionalPrice);
+    }
+    return priceOfRoom;
   }
 }

@@ -21,7 +21,7 @@ export class ReservationController {
 
   @Get('/byHotelId/:hotelId')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public getReservationsByHotelId(@Param()hotelId: number, @UserDecorator() user: LoggedUserDto): Promise<Reservation[]> {
+  public getReservationsByHotelId(@Param('hotelId')hotelId: number, @UserDecorator() user: LoggedUserDto): Promise<Reservation[]> {
     return this.reservationService.getReservationsByHotelId(hotelId, user);
   }
 

@@ -35,7 +35,7 @@ export class RoomRepository {
     return this.entityManager.find(Room, { where: { roomTypeId: roomTypeIds } });
   }
 
-  public async findAvailableByRoomType(id: number, from: Date, until: Date): Promise<Room[]> {
+  public async findAvailableByRoomType(id: number, from: string, until: string): Promise<Room[]> {
 
     const unavailablesRooms: string = await this.entityManager.createQueryBuilder().select()
       .select('reservation.roomId')

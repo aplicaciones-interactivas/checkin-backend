@@ -69,7 +69,7 @@ export class RoomService {
     }
   }
 
-  public findAvailableByRoomType(roomTypeId: number, from: Date, until: Date) {
+  public findAvailableByRoomType(roomTypeId: number, from: string, until: string) {
     return this.roomRepository.findAvailableByRoomType(roomTypeId, from, until);
   }
 }

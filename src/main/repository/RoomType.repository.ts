@@ -73,14 +73,13 @@ export class RoomTypeRepository {
     return this.entityManager.find(RoomType);
   }
 
-  public async findAllByUserId(id: number): Promise<RoomType[]> {
-    return this.entityManager.find(RoomType, {
-      where: {
-        hotel: {
-          userId: id,
-        },
-      },
-    });
+  public async findAllByUserId(userId: number): Promise<RoomType[]> {
+    return this.entityManager.createQueryBuilder()
+      .from(RoomType, 'roomType')
+      .select('roomType')
+      .innerJoinAndSelect('roomType.rooms', 'rooms')
+      .innerJoinAndSelect('roomType.hotel', 'hotel')
+      .where('hotel.userId = :id', { id: userId }).getMany();
   }
 
   public async update(entityId: number, newRoomType: RoomTypeDto) {

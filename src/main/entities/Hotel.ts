@@ -56,7 +56,7 @@ export class Hotel {
   userId!: number;
   @OneToMany(() => HotelImage, hotelImage => hotelImage.hotel)
   @JoinColumn()
-  hotelImages: Promise<HotelImage>;
+  hotelImages: Promise<HotelImage[]>;
   @RelationId((hotel: Hotel) => hotel.hotelImages)
   hotelImagesIds: number[];
 }

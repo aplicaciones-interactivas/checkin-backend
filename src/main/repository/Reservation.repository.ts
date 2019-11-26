@@ -16,25 +16,32 @@ export class ReservationRepository {
   }
 
   public getByUserId(userId: number): Promise<Reservation[]> {
-    return this.entityManager.find(Reservation, {
-      where: {
-        user: {
-          id: userId,
-        },
-      },
-    });
+    return this.entityManager.createQueryBuilder()
+      .select('reservation')
+      .from(Reservation, 'reservation')
+      .innerJoinAndSelect('reservation.room', 'room')
+      .leftJoinAndSelect('reservation.hotelMealPlan', 'hotelMealPlan')
+      .leftJoinAndSelect('hotelMealPlan.mealPlan', 'mealPlan')
+      .innerJoinAndSelect('room.roomType', 'roomType')
+      .innerJoinAndSelect('roomType.hotel', 'hotel')
+      .innerJoinAndSelect('hotel.hotelImages', 'hotelImages')
+      .innerJoinAndSelect('hotel.amenities', 'amenities')
+      .where('reservation.userId = :id', { id: userId })
+      .getMany();
   }
 
-  public getByHotelId(id: number): Promise<Reservation[]> {
-    return this.entityManager.find(Reservation, {
-      where: {
-        room: {
-          roomType: {
-            hotelId: id,
-          },
-        },
-      },
-    });
+  public getByHotelId(hotelId: number): Promise<Reservation[]> {
+    return this.entityManager.createQueryBuilder()
+      .select('reservation')
+      .from(Reservation, 'reservation')
+      .innerJoinAndSelect('reservation.user', 'user')
+      .innerJoinAndSelect('reservation.room', 'room')
+      .leftJoinAndSelect('reservation.hotelMealPlan', 'hotelMealPlan')
+      .leftJoinAndSelect('hotelMealPlan.mealPlan', 'mealPlan')
+      .innerJoinAndSelect('room.roomType', 'roomType')
+      .innerJoinAndSelect('roomType.hotel', 'hotel')
+      .where('hotel.id = :id', { id: hotelId })
+      .getMany();
   }
 
   public save(createReservation: CreateReservationDto): Promise<Reservation> {

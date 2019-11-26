@@ -37,4 +37,6 @@ export class Reservation {
     nullable: true,
   })
   hotelMealPlanId: number;
+  @Column('decimal')
+  totalPrice: number;
 }

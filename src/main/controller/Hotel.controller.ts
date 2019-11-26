@@ -69,7 +69,7 @@ export class HotelController {
 
   @Patch('/:id/mealPlan')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
-  public addMealPlans(@Param('id') id: number, @Body() mealPlanPrice: CreateMealPlanPriceDto[], @UserDecorator() user: LoggedUserDto) {
+  public addMealPlans(@Param('id') id: number, @Body() mealPlanPrice: CreateMealPlanPriceDto, @UserDecorator() user: LoggedUserDto) {
     return this.hotelService.addMealPlans(id, mealPlanPrice, user);
   }
 
@@ -78,13 +78,12 @@ export class HotelController {
   public updateMealPlan(@Param('id') id: number,
                         @Param('mealPlanId') mealPlanId: number,
                         @Body() mealPlanPrice: UpdateMealPlanPriceDto, @UserDecorator() user: LoggedUserDto) {
-    return this.hotelService.updateMealPlan(id, mealPlanId, mealPlanPrice.price, user);
+    return this.hotelService.updateMealPlan(id, mealPlanId, mealPlanPrice.additionalPrice, user);
   }
 
   @Patch('/:id/mealPlan/:mealPlanId/desasociate')
   @UseGuards(AuthGuard('jwt'), new RoleGuard(['SUPERUSER', 'ADMIN']))
   public desasociateMealPlan(@Param('id') id: number, @Param('mealPlanId') mealPlanId: number, @UserDecorator() user: LoggedUserDto) {
     return this.hotelService.desasociateMealPlan(id, mealPlanId, user);
-
   }
 }

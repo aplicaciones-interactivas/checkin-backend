@@ -1,3 +1,3 @@
 export class UpdateMealPlanPriceDto {
-  price: number;
+  additionalPrice: number;
 }

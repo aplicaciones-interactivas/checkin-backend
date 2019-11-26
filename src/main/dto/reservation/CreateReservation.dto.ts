@@ -1,7 +1,8 @@
 export class CreateReservationDto {
   roomTypeId: number;
-  from!: Date;
-  until!: Date;
+  from!: string;
+  until!: string;
   mealPlanId: number;
   userId: number;
+  totalPrice: number;
 }

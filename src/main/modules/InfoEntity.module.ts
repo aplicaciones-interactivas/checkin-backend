@@ -8,11 +8,12 @@ import { MealPlanRepository } from '../repository/MealPlan.repository';
 import { MealPlanService } from '../service/MealPlan.service';
 import { AmenityController } from '../controller/Amenity.controller';
 import { MealPlanController } from '../controller/MealPlan.controller';
+import { HotelMealPlanRepository } from '../repository/HotelMealPlan.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Amenity, MealPlan])],
   exports: [TypeOrmModule],
-  providers: [AmenitiyRepository, AmenityService, MealPlanRepository, MealPlanService],
+  providers: [AmenitiyRepository, AmenityService, MealPlanRepository, MealPlanService, HotelMealPlanRepository],
   controllers: [AmenityController, MealPlanController],
 })
 export class InfoEntityModule {
