@@ -39,7 +39,7 @@ export class HotelImageController {
     })).then((filesResponse) => {
       return Promise.all(filesResponse.map((fileResponse: any) => fileResponse.json()));
     })
-      .then(datas => datas.map((data: any) => data.url))
+      .then(datas => datas.map((data: any) => data.secure_url))
       .then(urls => this.hotelImageService.save(urls, hotelId, user));
   }
 
