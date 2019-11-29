@@ -8,8 +8,9 @@ export class RoomRepository {
   constructor(private entityManager: EntityManager) {
   }
 
-  public async create(room: Room[]): Promise<Room[]> {
-    return this.entityManager.save(Room, room);
+  public async save(room: Room[]): Promise<Room[]> {
+    const a = await this.entityManager.save(Room, room);
+    return a;
   }
 
   public async update(roomIds: number[], newRoomTypeId: number): Promise<Room[]> {

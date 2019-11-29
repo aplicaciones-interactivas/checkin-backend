@@ -31,7 +31,8 @@ export class RoomService {
 
   public async create(createRoomRequest: CreateRoomDto, user: LoggedUserDto): Promise<Room[]> {
     await this.validateAndContinue(createRoomRequest, user);
-    return this.roomRepository.create(await this.createRooms(createRoomRequest));
+    const rooms: Room[] = await this.createRooms(createRoomRequest);
+    return this.roomRepository.save(rooms);
   }
 
   public async update(updateRoomRequest: UpdateRoomDto, user: LoggedUserDto): Promise<Room[]> {

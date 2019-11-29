@@ -20,10 +20,6 @@ export class RoomType {
   @Column('integer')
   guests?: number;
 
-  @ManyToMany(() => Amenity)
-  @JoinTable()
-  amenities?: Promise<Amenity[]>;
-
   @ManyToOne(() => Hotel, {
     eager: true,
   })

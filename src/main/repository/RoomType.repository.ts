@@ -44,19 +44,13 @@ export class RoomTypeRepository {
 
   private async save(entityId: number, roomTypeDto: RoomTypeDto): Promise<RoomType> {
     let roomType: RoomType = this.entityManager.create(RoomType, roomTypeDto);
-    const ameminities: Amenity[] = await this.entityManager.findByIds(Amenity, roomTypeDto.amenitiesIds);
     return this.entityManager.transaction(async entityManager => {
-      if (entityId) {
-        await this.entityManager.update(RoomType, { where: { id: entityId } }, roomType);
+      if (!!entityId) {
+        await this.entityManager.update(RoomType, entityId, roomType);
         roomType = await this.entityManager.findOne(RoomType, roomType.id);
       } else {
         roomType = await this.entityManager.save(RoomType, roomType);
       }
-      await entityManager
-        .createQueryBuilder()
-        .relation(RoomType, 'amenities')
-        .of(roomType)
-        .add(ameminities);
       return this.entityManager.findOne(RoomType, roomType.id);
     });
   }
@@ -77,7 +71,7 @@ export class RoomTypeRepository {
     return this.entityManager.createQueryBuilder()
       .from(RoomType, 'roomType')
       .select('roomType')
-      .innerJoinAndSelect('roomType.rooms', 'rooms')
+      .leftJoinAndSelect('roomType.rooms', 'rooms')
       .innerJoinAndSelect('roomType.hotel', 'hotel')
       .where('hotel.userId = :id', { id: userId }).getMany();
   }
@@ -93,7 +87,7 @@ export class RoomTypeRepository {
   public async getByIdAndHotelId(eId: number, hId: number) {
     return this.entityManager.findOne(RoomType, {
       id: eId, hotelId: hId,
-    });
+    }, { relations: ['hotel', 'rooms'] });
 
   }
 }

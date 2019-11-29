@@ -44,9 +44,23 @@ export class HotelRepository {
 
   public async update(entityId: number, hotelRequest: HotelDto) {
     return this.entityManager.transaction(async entityManager => {
-      const hotel = entityManager.create(Hotel, hotelRequest);
-      await entityManager.update(Hotel, { where: { id: entityId } }, hotel);
-      return entityManager.findOne(Hotel, entityId);
+      let hotel = entityManager.create(Hotel, hotelRequest);
+      await entityManager.update(Hotel, entityId, hotel);
+      hotel = await entityManager.findOne(Hotel, entityId);
+
+      const removedAmenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.removeAmenitiesId);
+      await entityManager.createQueryBuilder()
+        .relation(Hotel, 'amenities')
+        .of(hotel)
+        .remove(removedAmenities);
+
+      const amenities: Amenity[] = await entityManager.findByIds(Amenity, hotelRequest.amenitiesId);
+      entityManager.createQueryBuilder()
+        .relation(Hotel, 'amenities')
+        .of(hotel)
+        .add(amenities);
+
+      return hotel;
     });
   }
 
