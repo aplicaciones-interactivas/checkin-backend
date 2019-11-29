@@ -14,7 +14,7 @@ export class RoomType {
   @Column('integer')
   maxOcupancy?: number;
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 })
   surfaceArea?: number;
 
   @Column('integer')
@@ -29,7 +29,7 @@ export class RoomType {
   @Column('integer')
   hotelId?: number;
 
-  @Column('decimal')
+  @Column('decimal', { precision: 10, scale: 2 })
   price?: number;
 
   @OneToMany(() => Room, (room) => room.roomType)
