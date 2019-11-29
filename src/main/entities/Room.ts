@@ -31,5 +31,6 @@ export class Room {
   @JoinTable()
   hotel: Promise<Hotel>;
 
+  @Column('number')
   hotelId: number;
 }
