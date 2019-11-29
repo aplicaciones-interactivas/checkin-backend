@@ -38,12 +38,6 @@ export class ReservationService {
   }
 
   public async unreserve(id: number, user: LoggedUserDto) {
-    const reservation: Reservation = await this.reservationRepository.findById(id);
-    if (user.roles.includes('USER')) {
-      this.validateUserToReservation(reservation, user);
-    } else if (user.roles.includes('ADMIN')) {
-      this.validateAdminToReservation(reservation, user);
-    }
     await this.reservationRepository.delete(id);
   }
 
