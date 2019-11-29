@@ -36,10 +36,6 @@ export class HotelImageService {
         throw new UnauthorizedException();
       }
     });
-
-    (await this.hotelImageRepository.findByIds(ids)).forEach(hi => {
-      fs.unlinkSync(hi.path);
-    });
     await this.hotelImageRepository.delete(ids);
   }
 
